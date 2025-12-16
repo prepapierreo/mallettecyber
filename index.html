@@ -1,0 +1,2487 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Mallette Cybersécurité - Expérience Interactive</title>
+    <style>
+        :root {
+            /* --- PALETTE DE BASE (LIGHT) --- */
+            --blue-situation: #2563eb;
+            --blue-light: #eff6ff;
+            --red-menace: #dc2626;
+            --red-light: #fef2f2;
+            --orange-risk: #f97316; 
+            --orange-light: #fff7ed;
+            --green-practice: #16a34a;
+            --green-light: #f0fdf4;
+            
+            --text-main: #1f2937;
+            --text-light: #4b5563;
+            --text-inverse: #ffffff; 
+            
+            --bg-app: #f3f4f6;
+            --bg-panel: #ffffff;
+            --bg-input: #ffffff;
+            --bg-sim: #ffffff; 
+            --bg-sim-header: #f0f0f0;
+            
+            --border-color: #e5e7eb;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* --- PALETTE DARK MODE --- */
+        body.dark-mode {
+            --blue-situation: #60a5fa; 
+            --blue-light: rgba(37, 99, 235, 0.2);
+            
+            --red-menace: #f87171;
+            --red-light: rgba(220, 38, 38, 0.2);
+            
+            --orange-risk: #fb923c;
+            --orange-light: rgba(234, 88, 12, 0.2);
+            
+            --green-practice: #4ade80;
+            --green-light: rgba(22, 163, 74, 0.2);
+            
+            --text-main: #f3f4f6;
+            --text-light: #9ca3af;
+            --text-inverse: #1f2937; 
+            
+            --bg-app: #111827; 
+            --bg-panel: #1f2937; 
+            --bg-input: #374151;
+            --bg-sim: #28303e; 
+            --bg-sim-header: #374151;
+            
+            --border-color: #374151;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); 
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            background-color: var(--bg-app);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header --- */
+        header {
+            background: var(--bg-panel);
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 60px; width: auto; }
+        .app-title { font-weight: 800; font-size: 1.2rem; color: var(--blue-situation); }
+
+        /* --- Layout Général --- */
+        .container {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* --- Écran d'accueil --- */
+        #home-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            animation: fadeIn 0.5s;
+        }
+        .hero-title { font-size: 2.5rem; margin-bottom: 10px; color: var(--blue-situation); }
+        .hero-text { max-width: 600px; margin-bottom: 40px; color: var(--text-light); font-size: 1.1rem; }
+        
+        .mode-selector {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn-mode {
+            background: var(--bg-panel);
+            border: 2px solid transparent;
+            padding: 20px;
+            border-radius: 12px;
+            width: 160px;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+        }
+        .btn-mode:hover { transform: translateY(-5px); border-color: var(--blue-situation); }
+        .btn-mode span { font-size: 2rem; }
+        .btn-mode strong { color: var(--blue-situation); }
+
+        .direct-select {
+            margin-top: 20px;
+            background: var(--bg-panel);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            color: var(--text-main);
+        }
+        select { 
+            padding: 10px; border-radius: 6px; 
+            border: 1px solid var(--border-color); 
+            font-size: 1rem; 
+            background: var(--bg-input);
+            color: var(--text-main);
+        }
+
+        .credits { 
+            margin-top: 50px; padding: 20px; 
+            background: var(--bg-panel); 
+            border-radius:12px; box-shadow: var(--card-shadow); 
+            display: flex; flex-direction:column; gap: 15px; 
+            align-items: center; justify-content: center; 
+        }
+        .credits-logos { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; justify-content: center; }
+        .credits img { height: 50px; object-fit: contain; }
+        body.dark-mode .credits img { filter: brightness(0.9); } 
+
+        /* --- Écran de Jeu --- */
+        #game-screen { display: none; height: 100%; gap: 20px; }
+        
+        @media (min-width: 1024px) {
+            #game-screen {
+                display: none; /* controllé par JS */
+                grid-template-columns: 40% 60%;
+            }
+        }
+
+        /* Colonne Gauche: Situation */
+        .situation-panel {
+            background: var(--bg-panel);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            border-left: 8px solid var(--blue-situation);
+            box-shadow: var(--card-shadow);
+            overflow-y: auto;
+            color: var(--text-main);
+        }
+        .panel-label {
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .situation-visual {
+            flex: 1;
+            background: var(--bg-app); 
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .situation-text { font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px; color: var(--text-main); }
+        .glossary-term { 
+            color: var(--blue-situation); 
+            border-bottom: 1px dotted var(--blue-situation); 
+            cursor: help; 
+            font-weight: 500;
+        }
+
+        .hints-box {
+            background: var(--orange-light);
+            border: 1px solid var(--orange-risk);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            display: none; 
+            color: var(--text-main);
+        }
+        .hint-item { 
+            display: flex; gap: 10px; margin-bottom: 8px; font-size: 0.95rem; 
+            align-items: flex-start;
+        }
+        
+        /* Historique des réponses */
+        .inventory-box {
+            margin-top: 20px;
+            border-top: 2px dashed var(--border-color);
+            padding-top: 15px;
+            flex: 1; 
+            transition: all 0.5s ease;
+        }
+        .inventory-box.top-position {
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-top: none;
+            border-bottom: 2px dashed var(--border-color);
+            padding-top: 0;
+            padding-bottom: 15px;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .inventory-title {
+            font-size: 0.9rem; font-weight: bold; color: var(--text-light); text-transform: uppercase; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .found-item-badge {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--bg-input); border: 1px solid var(--border-color);
+            padding: 8px 12px; border-radius: 20px;
+            font-size: 0.9rem; margin-bottom: 8px;
+            cursor: pointer; transition: 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            color: var(--text-main);
+        }
+        .found-item-badge:hover { border-color: var(--blue-situation); color: var(--blue-situation); }
+        .found-item-badge img { width: 18px; height: 18px; object-fit: contain; }
+        
+        .badge-menace { border-left: 4px solid var(--red-menace); }
+        .badge-risk { border-left: 4px solid var(--orange-risk); }
+        .badge-practice { border-left: 4px solid var(--green-practice); }
+
+        .menace-highlight {
+            font-weight: bold;
+            font-size: 1.1rem;
+            background-color: var(--red-light);
+            border: 2px solid var(--red-menace);
+            padding: 12px;
+        }
+
+        @keyframes highlightPulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); background: var(--blue-light); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); background: var(--blue-light); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+        .just-found {
+            animation: highlightPulse 1s ease-out;
+        }
+
+
+        /* Colonne Droite: Interaction */
+        .interaction-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            padding-right: 5px;
+            position: relative;
+        }
+
+        /* Panneau d'introduction de la situation (Droite) */
+        #intro-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            background: var(--bg-panel);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: var(--card-shadow);
+        }
+
+        #gameplay-panel {
+            display: none; /* Caché au début de la situation */
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: var(--bg-panel);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--card-shadow);
+        }
+        .progress-steps { display: flex; gap: 5px; }
+        .step-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--border-color); transition: 0.3s; }
+        .step-dot.active { background: var(--blue-situation); transform: scale(1.3); }
+        .step-dot.done { background: var(--green-practice); }
+
+        /* Phases de jeu */
+        .phase-tabs { display: flex; gap: 5px; margin-bottom: 10px; }
+        .phase-tab { 
+            flex: 1; text-align: center; padding: 12px 8px; 
+            font-size: 0.9rem; font-weight: bold; color: var(--text-light);
+            border-bottom: 4px solid var(--border-color); transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            opacity: 0.6; cursor: not-allowed;
+            background: var(--bg-panel); border-top-left-radius: 8px; border-top-right-radius: 8px;
+        }
+        .phase-tab.active { color: var(--text-main); opacity: 1; background: var(--bg-panel); }
+        .phase-tab.unlocked { cursor: pointer; opacity: 1; }
+        .phase-tab.unlocked:hover { background: var(--bg-app); }
+
+        .phase-tab.p-menace.active { border-color: var(--red-menace); color: var(--red-menace); }
+        .phase-tab.p-risk.active { border-color: var(--orange-risk); color: var(--orange-risk); }
+        .phase-tab.p-practice.active { border-color: var(--green-practice); color: var(--green-practice); }
+        
+        .phase-icon { width: 20px; height: 20px; object-fit: contain; }
+
+        .question-header-row {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 5px;
+        }
+        .remaining-badge {
+            font-size: 0.85rem; font-weight: bold;
+            padding: 4px 10px; border-radius: 12px;
+            background: var(--bg-app); color: var(--text-light);
+            display: flex; align-items: center; gap: 5px;
+        }
+
+        /* Grille de cartes réponses avec Flip Effect */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        /* Conteneur de la carte (Perspective) */
+        .game-card-container {
+            perspective: 1000px;
+            min-height: 160px;
+        }
+
+        .game-card {
+            background: transparent;
+            width: 100%; height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        /* FLIP EFFECT sur Desktop uniquement */
+        @media (min-width: 768px) {
+            .game-card.flipped {
+                transform: rotateY(180deg);
+            }
+        }
+
+        .card-face {
+            position: absolute; width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-panel);
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .card-front {
+            z-index: 2;
+            transition: all 0.2s;
+        }
+        
+        /* Au survol (seulement si non-flipped et non-locked pour éviter glitch) */
+        .game-card:not(.flipped):hover .card-front {
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow);
+            border-color: #999;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background: var(--bg-app);
+            padding: 10px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
+            z-index: 1;
+        }
+
+        /* États Visuels Front */
+        .game-card.correct .card-front { border-color: var(--green-practice); background-color: var(--green-light); }
+        .game-card.wrong .card-front { border-color: var(--red-menace); background-color: var(--red-light); }
+
+        /* États Visuels Back (Feedback) */
+        .card-back.back-correct { background-color: var(--green-light); border-color: var(--green-practice); color: var(--text-main); }
+        .card-back.back-wrong { background-color: var(--red-light); border-color: var(--red-menace); color: var(--text-main); }
+
+        .card-number-badge {
+            position: absolute; top: 8px; left: 8px;
+            width: 24px; height: 24px;
+            background: var(--bg-sim-header); color: var(--text-light);
+            border-radius: 50%; font-size: 0.8rem; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border-color); z-index: 10;
+        }
+        
+        .btn-info-corner {
+            position: absolute; top: 8px; right: 8px;
+            width: 24px; height: 24px;
+            background: var(--blue-light); color: var(--blue-situation);
+            border: 0px solid var(--blue-situation);
+            border-radius: 0%; font-size: 1.5rem; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 15; font-family: sans-serif; font-style: normal;
+        }
+        .btn-info-corner:hover { transform: scale(1.1); background: var(--blue-situation); color: white; }
+
+        .gc-content { padding: 15px; flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: center;}
+        .gc-title { font-weight: 700; margin-bottom: 5px; display: block; font-size: 0.9rem; margin-top: 10px;}
+        .gc-img { width: auto; height: 80px; object-fit: contain; display:none; margin-bottom: 5px;} 
+        .gc-icon-fallback { font-size: 3rem; color: #A2CF2E; font-weight: bold; display:none; }
+        
+        /* --- SIMULATIONS D'INTERFACES --- */
+        .sim-phone {
+            width: 280px; height: 480px; 
+            background: var(--bg-sim); 
+            border: 10px solid #222; border-radius: 25px;
+            position: relative; overflow: hidden; display: flex; flex-direction: column;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); font-family: sans-serif;
+            margin: 0 auto;
+            max-width: 100%; /* Responsive Mobile */
+        }
+        .phone-header { 
+            background: var(--bg-sim-header); 
+            padding: 10px; border-bottom: 1px solid var(--border-color); 
+            text-align: center; color: var(--text-main); 
+            display: flex; align-items: center; flex-direction: column;
+        }
+        .phone-avatar { width: 40px; height: 40px; background: #ddd; border-radius: 50%; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;}
+        .phone-body { flex: 1; background: var(--bg-sim); padding: 15px; overflow-y: auto; display: flex; flex-direction: column; }
+        .msg-bubble { 
+            background: #e9e9eb; /* Reste clair pour réalisme iOS */
+            padding: 10px 15px; border-radius: 18px; 
+            margin-bottom: 10px; font-size: 0.9rem; align-self: flex-start;
+            border-bottom-left-radius: 4px; color: black;
+        }
+        .phone-input { 
+            height: 40px; background: var(--bg-sim-header); 
+            border-top: 1px solid var(--border-color); 
+            display: flex; align-items: center; padding: 0 10px; 
+            color: var(--text-light); font-size: 0.8rem; justify-content: space-between;
+        }
+        .phone-btn { color: #007aff; font-weight: bold; }
+
+        .sim-window {
+            width: 100%; max-width: 500px; 
+            background: var(--bg-sim); 
+            border: 1px solid #999; 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15); font-family: 'Segoe UI', sans-serif;
+            margin: 0 auto;
+            color: var(--text-main);
+            position: relative; /* Pour overlay */
+        }
+        .sim-window.grayed::after {
+            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.4); z-index: 5;
+        }
+
+        .win-header { 
+            background: var(--bg-panel); padding: 6px 10px; 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        .win-title { font-size: 0.9rem; color: var(--text-main); }
+        .win-controls { display: flex; }
+        .win-btn { 
+            width: 30px; height: 20px; display: flex; align-items: center; justify-content: center; 
+            font-size: 0.7rem; color: var(--text-main); cursor: default;
+        }
+        .win-btn:hover { background: var(--border-color); }
+        .win-btn.close:hover { background: #e81123; color: white; }
+        
+        /* Email Sim */
+        .mail-toolbar { 
+            padding: 8px; background: var(--bg-sim-header); 
+            border-bottom: 1px solid var(--border-color); 
+            display: flex; gap: 15px; font-size: 1.1rem; color: var(--text-light);
+        }
+        .mail-headers { 
+            padding: 15px; background: var(--bg-sim); 
+            border-bottom: 1px solid var(--border-color); 
+            font-size: 0.9rem; 
+        }
+        .mail-row { margin-bottom: 4px; display: flex; align-items: baseline; }
+        .mail-label { color: var(--text-light); width: 60px; font-size: 0.85rem; }
+        .mail-val { font-size: 0.9rem; flex: 1; color: var(--text-main); }
+        .mail-val small { color: var(--text-light); font-size: 0.8rem;}
+        .mail-content { 
+            padding: 20px; line-height: 1.5; font-size: 0.95rem; 
+            background: var(--bg-sim); 
+            color: var(--text-main);
+        }
+
+        /* Browser Sim */
+        .browser-bar { 
+            padding: 8px; background: var(--bg-sim-header); 
+            display: flex; gap: 10px; border-bottom: 1px solid var(--border-color); align-items: center;
+        }
+        .url-field { 
+            flex: 1; background: var(--bg-input); 
+            border: 1px solid var(--border-color); padding: 4px 10px; 
+            font-size: 0.85rem; color: var(--text-main); 
+            display:flex; align-items:center; gap: 5px; justify-content: space-between;
+        }
+        .browser-content { 
+            height: 350px; position: relative; 
+            background: var(--bg-sim); 
+            border-top: 1px solid var(--border-color);
+            color: var(--text-main); 
+            overflow: auto;
+        }
+        
+        .fake-popup {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80%; background: #ece9d8; border: 2px solid #0055ea; 
+            box-shadow: 0 0 0 1000px rgba(0,0,0,0.4); z-index: 10;
+            color: black; 
+        }
+        .popup-header { 
+            background: linear-gradient(to right, #0058ee, #3b93ff); 
+            color: white; padding: 4px 8px; font-weight: bold; font-size: 0.9rem;
+            display: flex; justify-content: space-between;
+        }
+        .popup-body { padding: 20px; text-align: center; font-family: 'Arial', sans-serif; }
+        .popup-warning { color: red; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; }
+        .btn-win-ok { background: #ddd; border: 1px solid #888; padding: 4px 20px; margin-top: 15px; cursor: pointer; color: black;}
+
+        /* Animation Bertrand */
+        @keyframes gentle-pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.02); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        .pulse-red { animation: gentle-pulse 2s infinite ease-in-out; border-color: red !important; box-shadow: 0 0 20px rgba(255,0,0,0.5) !important;}
+
+        /* Fatou Layout */
+        .fatou-layout {
+            padding: 20px; font-family: sans-serif;
+        }
+        .fatou-banner {
+            background: #2563eb; color: white; padding: 8px; text-align: center;
+            font-weight: bold; margin: -1px -1px 20px -1px;
+        }
+        .fatou-btn {
+            background: #e5e7eb; border: 1px solid #9ca3af; color: #374151;
+            padding: 8px 12px; margin-bottom: 15px; width: 100%; text-align: left;
+            cursor: pointer; font-size: 0.9rem; display: flex; align-items: center;
+        }
+        .fatou-label { font-weight: 500; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+        .fatou-submit { 
+            background: #16a34a; color: white; border: none; 
+            padding: 10px 30px; border-radius: 4px; font-weight: bold; 
+            margin: 10px auto; display: block;
+        }
+
+        /* --- Boutons et Actions --- */
+        .btn-primary {
+            background: var(--blue-situation); color: white;
+            border: none; padding: 12px 24px; border-radius: 8px;
+            font-weight: 600; cursor: pointer; font-size: 1rem;
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover { filter: brightness(1.1); }
+        .btn-secondary {
+            background: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border-color);
+            padding: 8px 16px; border-radius: 8px; cursor: pointer;
+        }
+        .btn-secondary:hover { background: var(--bg-app); }
+
+        .btn-audio {
+            background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 50%;
+            width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1rem; color: var(--text-main); transition: all 0.2s;
+            margin-left: 8px; flex-shrink: 0;
+        }
+        .btn-audio:hover { background: var(--bg-app); color: var(--blue-situation); transform: scale(1.1); }
+        
+        .btn-audio.playing { 
+            background: var(--red-menace) !important; 
+            color: white !important; 
+            border-color: var(--red-menace) !important; 
+            animation: none; 
+            border-radius: 4px; 
+        }
+
+        .status-msg { font-weight: bold; flex: 1; }
+
+        /* --- Modales --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); 
+            z-index: 1000; 
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(3px);
+        }
+        
+        #modal-phase-success { z-index: 1000; }
+        #modal-card-detail { z-index: 1100; } 
+        #modal-definition { z-index: 1200; }
+        #modal-settings { z-index: 1300; }
+        
+        .modal-card {
+            background: var(--bg-panel); color: var(--text-main);
+            width: 90%; max-width: 700px; max-height: 90vh;
+            border-radius: 12px; position: relative; display: flex; flex-direction: column;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease-out;
+            border: 1px solid var(--border-color);
+        }
+        .modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { margin: 0; font-size: 1.3rem; color: var(--blue-situation); }
+        .close-modal { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); line-height: 1; }
+        .modal-content { padding: 25px; overflow-y: auto; }
+        
+        .modal-section { margin-bottom: 25px; }
+        .section-header { display: flex; align-items: center; gap: 10px; font-weight: bold; margin-bottom: 8px; font-size: 1.1rem; }
+        .section-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: white; font-size: 0.9rem; }
+        .icon-why { background: #6366f1; }
+        .icon-how { background: #f59e0b; }
+        .icon-real { background: #10b981; }
+        .real-life-box { 
+            background: var(--green-light); 
+            border-left: 4px solid var(--green-practice); 
+            padding: 15px; border-radius: 0 4px 4px 0; font-style: italic; 
+            color: var(--text-main);
+        }
+        
+        .glossary-item { padding: 10px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;}
+        .glossary-btn { font-size: 0.8rem; background: var(--blue-light); color: var(--blue-situation); border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+        
+        .recap-list { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; }
+        .recap-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 10px; border: 1px solid var(--border-color); 
+            border-radius: 8px; background: var(--bg-app);
+            color: var(--text-main);
+        }
+        .recap-item img { height: 20px; width: 20px; margin-right: 10px; }
+
+        .clickable-word {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .clickable-word:hover {
+            text-decoration: underline;
+            filter: brightness(0.8);
+        }
+
+        .settings-row { margin-bottom: 15px; }
+        .settings-row label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--text-light); }
+        .settings-row select, .settings-row input[type="range"] { 
+            width: 100%; padding: 8px; 
+            border: 1px solid var(--border-color); border-radius: 6px; 
+            background: var(--bg-input); color: var(--text-main);
+        }
+
+        .toggle-switch {
+            position: relative; width: 50px; height: 24px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 24px;
+        }
+        .toggle-slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px;
+            left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .toggle-slider { background-color: var(--blue-situation); }
+        input:checked + .toggle-slider:before { transform: translateX(26px); }
+        
+        /* --- TOAST NOTIFICATION (MOBILE ONLY) --- */
+        #toast-notification {
+            visibility: hidden;
+            width: 90%; max-width: 350px;
+            background-color: #333; color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 16px; padding-right: 30px;
+            position: fixed;
+            z-index: 9999;
+            left: 50%; bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 0.95rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+        #toast-notification.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 20px;
+        }
+        #toast-notification.success { background-color: var(--green-practice); }
+        #toast-notification.error { background-color: var(--red-menace); }
+        
+        .toast-close {
+            position: absolute; top: 5px; right: 8px;
+            background: none; border: none; color: white;
+            font-size: 1.2rem; cursor: pointer;
+            opacity: 0.8;
+        }
+        
+        /* Cacher le toast sur Desktop */
+        @media (min-width: 768px) {
+            #toast-notification { display: none !important; }
+        }
+
+
+        /* Animation Célébration */
+        #celebration-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: transparent; 
+            z-index: 2000; 
+            display: none;
+            pointer-events: none; 
+        }
+        .bravo-text {
+            font-size: 4rem; color: var(--blue-situation);
+            font-weight: 800; 
+            text-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--bg-panel); padding: 20px 40px; border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            border: 2px solid var(--border-color);
+        }
+        @keyframes popIn { from { transform: translateX(-50%) scale(0); opacity: 0; } to { transform: translateX(-50%) scale(1); opacity: 1; } }
+        canvas#confetti { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .txt-blue { color: var(--blue-situation); }
+        .txt-red { color: var(--red-menace); }
+        .txt-orange { color: var(--orange-risk); }
+        .txt-green { color: var(--green-practice); }
+        
+        .glossary-links-section { margin-top: 30px; border-top: 2px dashed var(--border-color); padding-top: 20px; }
+        .glossary-links-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .glossary-link-btn { font-size: 0.85rem; padding: 6px 12px; border: 1px solid; border-radius: 20px; cursor: pointer; background: transparent; }
+        .glossary-link-btn.m { border-color: var(--red-menace); color: var(--red-menace); }
+        .glossary-link-btn.r { border-color: var(--orange-risk); color: var(--orange-risk); }
+        .glossary-link-btn.p { border-color: var(--green-practice); color: var(--green-practice); }
+        .glossary-link-btn:hover { background: rgba(0,0,0,0.05); }
+
+    </style>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <img src="images/logo_republique.png" alt="Rép. Française" class="logo-img" onerror="this.style.display='none'">
+            <div class="app-title">La Mallette Cyber</div>
+        </div>
+        <div style="display: flex; gap:10px;">
+            <button class="btn-secondary" onclick="toggleDarkMode()" title="Changer de thème">🌙</button>
+            <button class="btn-secondary" onclick="openSettings()">⚙️ Paramètres</button>
+            <button class="btn-secondary" onclick="openGlossary()">📖 Lexique & Fiches</button>
+            <button class="btn-secondary" onclick="returnHome()">🏠 Accueil</button>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- ÉCRAN D'ACCUEIL -->
+        <div id="home-screen">
+            <h1 class="hero-title">Déjouez les pièges du numérique</h1>
+            <p class="hero-text">Analysez des situations réelles, identifiez les menaces et adoptez les bons réflexes.</p>
+
+            <div class="mode-selector">
+                <div class="btn-mode" onclick="startGame(1)">
+                    <span>⚡</span>
+                    <div>Partie Rapide<br><strong>1 Situation</strong></div>
+                </div>
+                <div class="btn-mode" onclick="startGame(3)">
+                    <span>🎲</span>
+                    <div>Standard<br><strong>3 Situations</strong></div>
+                </div>
+                <div class="btn-mode" onclick="startGame(5)">
+                    <span>🎓</span>
+                    <div>Avancé<br><strong>5 Situations</strong></div>
+                </div>
+                <div class="btn-mode" onclick="startGame(('all'))">
+                    <span>🏆</span>
+                    <div>Grand Chelem<br><strong>7 Situations</strong></div>
+                </div>
+            </div>
+
+            <div class="direct-select">
+                <label for="scenario-select" style="font-weight: bold; color: var(--blue-situation);">Entraînement spécifique :</label>
+                <div>
+                    <select id="scenario-select"></select>
+                    <button class="btn-primary" onclick="startSpecificGame()">Jouer</button>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn-secondary" onclick="openSettings()">🔊 Options Synthèse Vocale</button>
+            </div>
+
+            <div class="credits">
+                <span style="color: var(--text-light); font-size:0.9rem;">Ressources officielles et Financeurs :</span>
+                <div class="credits-logos">
+                    <img src="images/logo_cybermalveillance.png" alt="Cybermalveillance.gouv.fr" title="Cybermalveillance.gouv.fr" onerror="this.style.display='none'">
+                    <img src="images/logo_anct.png" alt="ANCT" title="ANCT" onerror="this.style.display='none'">
+                    <img src="images/logo_relance.png" alt="France Relance" title="France Relance" onerror="this.style.display='none'">
+                    <img src="images/logo_ue.png" alt="Financé par l'Union Européenne" title="Union Européenne" onerror="this.style.display='none'">
+                </div>
+            </div>
+        </div>
+
+        <!-- ÉCRAN DE JEU -->
+        <div id="game-screen">
+            
+            <!-- Colonne Gauche -->
+            <div class="situation-panel">
+                <div class="panel-label txt-blue">Situation</div>
+                
+                <div id="situation-content-wrapper">
+                    <!-- Zone Visuelle (Interface simulée) -->
+                    <div id="visual-container" class="situation-visual">
+                        <!-- Injection JS ici -->
+                    </div>
+
+                    <div style="display:flex; align-items:flex-start; margin-bottom: 20px;">
+                        <div id="scenario-text" class="situation-text" style="flex:1; margin-bottom:0;">
+                            <!-- Texte narratif injecté -->
+                        </div>
+                        <button class="btn-audio" onclick="TTS.speak(document.getElementById('scenario-text').innerText, this)" title="Lire le texte" aria-label="Écouter le texte">🔊</button>
+                    </div>
+
+                    <!-- Indices visibles uniquement en phase 1 -->
+                    <div id="hints-box" class="hints-box">
+                        <div style="font-weight:bold; color: var(--orange-risk); margin-bottom:10px; display:flex; justify-content:space-between;">
+                            <span>Indices d'observation</span>
+                            <span id="hint-counter">1/3</span>
+                        </div>
+                        <div id="hints-list">
+                            <!-- Indices injectés -->
+                        </div>
+                        <button id="btn-reveal-hint" class="btn-secondary" style="width:100%; margin-top:10px; font-size:0.9rem;" onclick="revealHint()">💡 Révéler un indice</button>
+                    </div>
+                </div>
+                
+                <!-- Zone Inventaire / Historique -->
+                <div id="inventory-box" class="inventory-box">
+                    <div class="inventory-title"><span>📋</span> Éléments collectés</div>
+                    <div id="found-items-container">
+                        <em style="color:var(--text-light); font-size:0.85rem;">Aucun élément identifié pour le moment.</em>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne Droite -->
+            <div class="interaction-panel">
+                
+                <!-- ECRAN INTRO (Au début d'un niveau) -->
+                <div id="intro-panel">
+                    <h2 style="color:var(--blue-situation); margin-bottom: 20px; font-size:1.8rem;">À vous de jouer !</h2>
+                    <p style="font-size:1.2rem; color:var(--text-main); margin-bottom:30px; max-width:500px; line-height:1.6;">
+                        Analysez attentivement la situation présentée sur la gauche, relevez les indices suspects et préparez-vous à identifier les menaces.
+                    </p>
+                    <button class="btn-primary" onclick="startLevel()" style="font-size:1.3rem; padding:15px 40px;">🔍 Démarrer l'analyse</button>
+                </div>
+
+                <!-- ECRAN GAMEPLAY (Masqué par défaut) -->
+                <div id="gameplay-panel">
+                    <!-- Progression Globale -->
+                    <div class="progress-container">
+                        <span style="font-weight:bold; color:var(--text-light);">Progression</span>
+                        <div class="progress-steps" id="global-progress"></div>
+                    </div>
+
+                    <!-- Onglets Phases -->
+                    <div class="phase-tabs">
+                        <div id="tab-menace" class="phase-tab p-menace" onclick="tryNavigatePhase(0)">
+                            <img src="images/espionner.png" class="phase-icon" onerror="this.style.display='none'">
+                            1. MENACE
+                        </div>
+                        <div id="tab-risk" class="phase-tab p-risk" onclick="tryNavigatePhase(1)">
+                            <img src="images/eclair.png" class="phase-icon" onerror="this.style.display='none'">
+                            2. RISQUES
+                        </div>
+                        <div id="tab-practice" class="phase-tab p-practice" onclick="tryNavigatePhase(2)">
+                            <img src="images/bouclier.png" class="phase-icon" onerror="this.style.display='none'">
+                            3. PRATIQUES
+                        </div>
+                    </div>
+
+                    <div style="background:var(--bg-panel); padding:20px; border-radius:12px; box-shadow:var(--card-shadow); flex:1; display:flex; flex-direction:column;">
+                        <div class="question-header-row">
+                            <h2 id="question-title" style="margin:0; color:var(--text-main); display:flex; align-items:center; gap:10px;">
+                                <!-- Icon & Title -->
+                            </h2>
+                            <span id="remaining-count" class="remaining-badge" style="display:none;"></span>
+                        </div>
+                        
+                        <p id="instruction" style="color:var(--text-light); margin-bottom:20px;">Sélectionnez la bonne réponse.</p>
+
+                        <div id="cards-area" class="cards-grid">
+                            <!-- Cartes générées par JS -->
+                        </div>
+                    </div>
+
+                    <!-- Footer Actions -->
+                    <div class="actions-footer">
+                        <div class="status-msg" id="status-msg"></div>
+                        <button id="btn-next" class="btn-primary" style="display:none;" onclick="nextStep()">Situation Suivante →</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION (Mobile Only) -->
+    <div id="toast-notification">
+        <button class="toast-close" onclick="closeToast()">&times;</button>
+        <span id="toast-message">Notification</span>
+    </div>
+
+    <!-- MODALE GÉNÉRIQUE (Détail Fiche) -->
+    <div id="modal-card-detail" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <h3 id="modal-title" class="modal-title">Titre Fiche</h3>
+                    <button id="modal-speak-btn" class="btn-audio" title="Lire la fiche" aria-label="Écouter la fiche">🔊</button>
+                </div>
+                <button class="close-modal" onclick="closeModal('modal-card-detail')" aria-label="Fermer la fenêtre">&times;</button>
+            </div>
+            <div id="modal-content-body" class="modal-content">
+                <!-- Contenu injecté -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE PARAMÈTRES AUDIO & THÈME -->
+    <div id="modal-settings" class="modal-overlay">
+        <div class="modal-card" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Paramètres</h3>
+                <button class="close-modal" onclick="closeModal('modal-settings')" aria-label="Fermer les paramètres">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div class="modal-section">
+                    <div class="section-header txt-blue">Apparence</div>
+                    <div class="settings-row" style="display:flex; justify-content:space-between; align-items:center;">
+                        <label for="dark-toggle" style="margin:0;">Mode Sombre</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="dark-toggle" onchange="toggleDarkMode()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="section-header txt-blue">Synthèse Vocale</div>
+                    <div class="settings-row" style="display:flex; justify-content:space-between; align-items:center;">
+                        <label for="tts-enabled" style="margin:0;">Activer l'audio</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="tts-enabled" checked onchange="TTS.toggleEnabled(this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="settings-row">
+                        <label for="tts-rate">Vitesse</label>
+                        <input type="range" id="tts-rate" min="0.5" max="2" step="0.1" value="1" onchange="TTS.setRate(this.value)">
+                    </div>
+
+                    <div style="text-align:center; margin-top:20px;">
+                        <button class="btn-primary" onclick="TTS.test()">🔊 Tester la voix</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE DÉFINITION -->
+    <div id="modal-definition" class="modal-overlay">
+        <div class="modal-card" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 id="def-term" class="modal-title">Terme</h3>
+                <button class="close-modal" onclick="closeModal('modal-definition')" aria-label="Fermer la définition">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div id="def-text"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE GLOSSAIRE -->
+    <div id="modal-glossary" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">Lexique & Fiches de Révision</h3>
+                <button class="close-modal" onclick="closeModal('modal-glossary')" aria-label="Fermer le lexique">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div id="glossary-list"></div>
+                <div class="glossary-links-section">
+                    <h4 style="color:var(--text-light); margin-bottom:15px;">Toutes les fiches</h4>
+                    <div id="glossary-all-links"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE SUCCÈS PHASE & FIN DE PARTIE -->
+    <div id="modal-phase-success" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header" style="background: var(--green-light); border-bottom: none;">
+                <h3 class="modal-title" style="color: var(--green-practice); display: flex; align-items: center; gap: 10px;">🎉 Bravo !</h3>
+            </div>
+            <div class="modal-content" style="text-align: center;">
+                <p id="success-message-text" style="font-size: 1.1rem; color: var(--text-light); margin-bottom: 20px;">Vous avez identifié correctement tous les éléments.</p>
+                
+                <!-- Zone de narratif final -->
+                <div id="final-narrative-box" style="display:none; text-align: left; background: var(--blue-light); padding: 15px; border-radius: 8px; border-left: 5px solid var(--blue-situation); margin-bottom: 20px; line-height: 1.6;"></div>
+
+                <div style="text-align: left;">
+                    <strong style="color: var(--text-light); text-transform: uppercase; font-size: 0.85rem;">Récapitulatif :</strong>
+                    <div id="phase-recap-list" class="recap-list">
+                        <!-- Items trouvés -->
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <button id="btn-modal-next" class="btn-primary" style="font-size: 1.1rem; padding: 15px 30px; width: 100%;">Continuer ➡</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OVERLAY CÉLÉBRATION (CONFETTIS) -->
+    <div id="celebration-overlay">
+        <canvas id="confetti"></canvas>
+        <div class="bravo-text">BRAVO ! 🎉</div>
+    </div>
+
+<script>
+    /* =========================================
+       DARK MODE & THEME MANAGEMENT
+       ========================================= */
+    function initTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+            document.body.classList.add('dark-mode');
+            document.getElementById('dark-toggle').checked = true;
+        } else {
+            document.body.classList.remove('dark-mode');
+            document.getElementById('dark-toggle').checked = false;
+        }
+    }
+
+    function toggleDarkMode() {
+        const isDark = document.body.classList.toggle('dark-mode');
+        document.getElementById('dark-toggle').checked = isDark;
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    /* =========================================
+       SYSTÈME DE SYNTHÈSE VOCALE (TTS)
+       ========================================= */
+    const TTS = {
+        synth: window.speechSynthesis,
+        voice: null,
+        rate: 1,
+        enabled: true,
+        currentBtn: null,
+        originalIcon: null,
+
+        init: function() {
+            if (!this.synth) return;
+            if (this.synth.onvoiceschanged !== undefined) {
+                this.synth.onvoiceschanged = () => this.populateVoices();
+            }
+            this.populateVoices();
+        },
+
+        populateVoices: function() {
+            const voices = this.synth.getVoices();
+            // Priorité: fr-FR > fr > Google Français > default
+            let foundVoice = null;
+            voices.forEach((voice) => {
+                if (!foundVoice && voice.lang.startsWith('fr')) {
+                    if (voice.lang === 'fr-FR' || voice.name.includes('Google') || voice.default) {
+                        this.voice = voice;
+                        foundVoice = voice; 
+                    }
+                }
+            });
+        },
+
+        setRate: function(val) {
+            this.rate = parseFloat(val);
+        },
+
+        toggleEnabled: function(checked) {
+            this.enabled = checked;
+            this.stop();
+        },
+
+        speak: function(text, btnElement = null) {
+            if (!this.enabled || !text) return;
+
+            if (this.synth.speaking && this.currentBtn === btnElement) {
+                this.stop();
+                return;
+            }
+
+            this.stop(); 
+
+            const cleanText = text.replace(/<[^>]*>/g, '').replace(/http\S+/g, 'adresse web');
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            
+            if (this.voice) utterance.voice = this.voice;
+            utterance.rate = this.rate;
+
+            if (btnElement) {
+                this.currentBtn = btnElement;
+                this.originalIcon = btnElement.innerHTML;
+                
+                btnElement.classList.add('playing');
+                btnElement.innerHTML = "⏹"; 
+                btnElement.setAttribute("aria-label", "Arrêter la lecture");
+                
+                utterance.onend = () => this.resetBtn();
+                utterance.onerror = () => this.resetBtn();
+            }
+
+            this.synth.speak(utterance);
+        },
+        
+        resetBtn: function() {
+            if(this.currentBtn) {
+                this.currentBtn.classList.remove('playing');
+                this.currentBtn.innerHTML = this.originalIcon || "🔊";
+                this.currentBtn.setAttribute("aria-label", "Écouter");
+                this.currentBtn = null;
+            }
+        },
+
+        stop: function() {
+            if (this.synth.speaking) {
+                this.synth.cancel();
+            }
+            this.resetBtn();
+        },
+
+        test: function() {
+            this.speak("Ceci est un test de la synthèse vocale pour la Mallette Cyber.");
+        },
+        
+        readVisual: function(data, type, btn) {
+            let textToRead = "";
+            if (type === 'sms' || type === 'sms_install') {
+                textToRead = `SMS de ${data.sender}. Message : ${data.content}`;
+            } else if (type === 'mail') {
+                textToRead = `Email de ${data.from}. Objet : ${data.subject}. Contenu : ${data.content}`;
+            } else if (type === 'browser' || type === 'browser_popup') {
+                textToRead = `Page web adresse ${data.url}. Contenu : ${data.content || data.popup}`;
+            }
+            this.speak(textToRead, btn);
+        }
+    };
+
+    /* =========================================
+       FOCUS TRAP & A11Y UTILS
+       ========================================= */
+    let lastFocusedElement = null;
+
+    function trapTabKey(e) {
+        const modal = document.querySelector('.modal-overlay[style*="flex"]');
+        if (!modal) return;
+
+        const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.key === 'Tab') {
+            if (e.shiftKey) { // Shift + Tab
+                if (document.activeElement === firstElement) {
+                    e.preventDefault();
+                    lastElement.focus();
+                }
+            } else { // Tab
+                if (document.activeElement === lastElement) {
+                    e.preventDefault();
+                    firstElement.focus();
+                }
+            }
+        }
+        if (e.key === 'Escape') {
+            closeModal(modal.id);
+        }
+    }
+
+    /* =========================================
+       TOAST NOTIFICATION UTILS (MOBILE ONLY)
+       ========================================= */
+    function showToast(message, type = 'default') {
+        const toast = document.getElementById('toast-notification');
+        const msgSpan = document.getElementById('toast-message');
+        msgSpan.textContent = message;
+        
+        toast.className = ''; // Reset classes
+        if (type === 'success') toast.classList.add('success');
+        if (type === 'error') toast.classList.add('error');
+        
+        toast.classList.add('show');
+    }
+
+    function closeToast() {
+        document.getElementById('toast-notification').classList.remove('show');
+    }
+
+    function openModal(id) { 
+        lastFocusedElement = document.activeElement; 
+        const modal = document.getElementById(id);
+        modal.style.display = 'flex'; 
+        
+        const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if(focusable.length) focusable[0].focus();
+    }
+    
+    function closeModal(id) { 
+        document.getElementById(id).style.display = 'none';
+        if(lastFocusedElement) lastFocusedElement.focus(); 
+    }
+
+    /* =========================================
+       DONNÉES COMPLÈTES RESTAURÉES
+       ========================================= */
+    const FEEDBACK_DATA = {
+        "m_support": {
+            "r_escroquerie": "Oui ! L'escroc essaie de vous faire peur pour vous vendre un faux dépannage très cher.",
+            "r_identite": "Non. Ici, l'escroc veut votre argent immédiatement, il ne cherche pas à prendre votre place dans la société.",
+            "r_bancaire": "Pas directement. L'escroc vous demandera de payer (par carte ou virement), mais il ne vole pas forcément l'accès à votre compte bancaire.",
+            "r_perte": "Non. Votre ordinateur n'est pas cassé, c'est juste une fenêtre bloquante qui fait croire à une panne.",
+            "r_vol_id": "Non. L'arnaqueur ne s'intéresse pas à votre carte d'identité, il veut juste que vous payiez l'intervention.",
+            "p_antivirus": "Oui. Un antivirus à jour peut détecter et bloquer l'affichage de cette page web malveillante.",
+            "p_sites": "Oui. Ces publicités apparaissent souvent sur des sites douteux (streaming illégal, etc.). Évitez-les.",
+            "p_liens": "Oui. Ne cliquez pas sur les liens suspects ou les publicités alarmistes qui mènent à ces arnaques.",
+            "p_info_perso": "Inutile ici. L'écran est déjà bloqué, ne rien dire ne fera pas partir la fenêtre.",
+            "p_save": "Sauvegarder est utile, mais cela n'empêchera pas cette fenêtre de s'afficher et de vous bloquer.",
+            "p_contact": "Appeler Microsoft ou Apple ne servira à rien, ils ne vous appelleront jamais pour ça. Ne composez pas le numéro affiché !",
+            "p_mdp": "Le problème ici n'est pas votre mot de passe, mais une page web qui vous fait peur.",
+            "p_double": "La double authentification protège vos comptes, mais pas votre écran contre ce genre de message.",
+            "p_cb": "Effacer votre carte des sites marchands ne protège pas contre cette arnaque téléphonique.",
+            "p_min": "Limiter vos infos en ligne est bien, mais ici c'est une attaque directe sur votre navigateur.",
+            "p_doc": "L'escroc ne vous demandera pas vos papiers, mais votre carte bleue.",
+            "p_maj": "Ces faux sites web n'ont pas forcément besoin de failles de sécurité de votre navigateur pour s'afficher.",
+            "p_app": "Ce n'est pas une application installée, c'est une page web."
+        },
+        "m_piratage": {
+            "r_identite": "Oui. Le pirate utilise votre compte (Facebook, mail) pour se faire passer pour vous auprès de vos amis.",
+            "r_escroquerie": "Oui. Le pirate peut demander de l'argent à vos proches en prétextant une urgence.",
+            "r_vol_id": "Oui. Si votre boîte mail piratée contient des scans de vos papiers d'identité, il les volera.",
+            "r_bancaire": "Oui. Si c'est votre mail principal, le pirate peut réinitialiser le mot de passe de votre banque ou de sites marchands.",
+            "r_perte": "Oui. Le pirate peut changer votre mot de passe et tout effacer (photos, messages) pour vous nuire.",
+            "p_mdp": "Oui ! Un mot de passe long et complexe empêche le pirate de le deviner facilement.",
+            "p_double": "Oui ! C'est la meilleure protection : même avec votre mot de passe, le pirate est bloqué sans votre téléphone.",
+            "p_antivirus": "Oui. Un virus sur votre ordinateur aurait pu voler votre mot de passe. L'antivirus l'aurait bloqué.",
+            "p_liens": "Oui. Le piratage vient souvent d'un clic sur un lien piégé (phishing) reçu auparavant.",
+            "p_contact": "Appeler ou vérifier un organisme n'empêche pas le piratage.",
+            "p_save": "La sauvegarde protège vos fichiers, mais n'empêche pas un pirate de voler votre compte.",
+            "p_info_perso": "Ce n'est pas en donnant moins d'infos que vous empêchez le piratage technique de votre mot de passe.",
+            "p_cb": "Cela protège votre argent, mais n'empêche pas le pirate de prendre le contrôle de votre compte mail.",
+            "p_min": "Utile pour la vie privée, mais cela ne renforce pas la sécurité de l'accès à votre compte.",
+            "p_doc": "Ne pas envoyer de papiers est une bonne chose, mais cela ne protège pas votre mot de passe.",
+            "p_maj": "Les mises à jour sont importantes, mais ici le problème est souvent un mot de passe faible ou volé.",
+            "p_sites": "Naviguer sur des sites sûrs est bien, mais le piratage vient souvent d'un mail compromis ou d'un mot de passe trop simple.",
+            "p_app": "Ce n'est pas une application pirate qui a pris le contrôle, c'est un accès direct au compte."
+        },
+        "m_phishing": {
+            "r_bancaire": "Oui. Si vous remplissez le faux formulaire, ils volent vos numéros de carte immédiatement.",
+            "r_identite": "Oui. Ils peuvent utiliser vos infos personnelles saisies pour usurper votre identité.",
+            "r_escroquerie": "Oui. C'est le but : vous faire croire à une urgence (livraison, amende) pour vous faire payer.",
+            "r_vol_id": "Oui. Certains formulaires demandent de scanner une pièce d'identité « pour vérification ».",
+            "r_perte": "Non. Le phishing vole des infos, il ne détruit pas vos données sur votre ordinateur.",
+            "p_liens": "Oui ! Ne cliquez jamais sur un lien dans un SMS ou mail inattendu. Allez directement sur le site officiel.",
+            "p_contact": "Oui. Appeler le vrai organisme (ex: votre banque) permet de confirmer que le message est faux.",
+            "p_info_perso": "Oui. Ne donnez jamais vos infos personnelles ou bancaires après avoir cliqué sur un lien reçu.",
+            "p_mdp": "Oui. Utilisez des mots de passe différents : si vous le donnez par erreur sur le faux site, vos autres comptes restent sûrs.",
+            "p_antivirus": "Un antivirus ne peut pas toujours empêcher que vous donniez volontairement vos infos sur un faux site.",
+            "p_save": "Sauvegarder vos données ne vous protège pas contre le vol de vos identifiants bancaires par ruse.",
+            "p_double": "La double authentification protège l'accès, mais si vous donnez le code au pirate sur le faux site, il entre quand même.",
+            "p_cb": "Effacer la carte des sites ne sert à rien si vous la donnez vous-même au pirate dans le faux formulaire.",
+            "p_min": "Limiter les infos publiques est bien, mais ici le piège arrive directement dans votre messagerie.",
+            "p_doc": "Ne pas envoyer de documents est bien, mais le danger immédiat est le vol de carte bancaire.",
+            "p_maj": "Mettre à jour l'ordinateur ne permet pas de détecter un mensonge dans un mail.",
+            "p_sites": "Vous n'êtes pas sur un site illégal, vous avez juste cliqué sur un lien reçu par message.",
+            "p_app": "Ce n'est pas une application, c'est un site web frauduleux."
+        },
+        "m_vol": {
+            "r_vol_id": "Oui ! En envoyant vos papiers (passeport, avis d'impôt), vous donnez les clés de votre identité.",
+            "r_usurpation": "Oui. Avec vos papiers, ils peuvent ouvrir des crédits ou louer des voitures à votre nom.",
+            "r_escroquerie": "Oui. Ils utiliseront votre identité pour arnaquer d'autres personnes ou des organismes.",
+            "r_bancaire": "Pas tout de suite. Ils veulent d'abord vos papiers pour créer de faux comptes, pas vider le vôtre directement.",
+            "r_perte": "Non. Vos documents originaux sont toujours chez vous, ils ont juste volé des copies.",
+            "p_doc": "Oui ! Ne jamais envoyer de copie de pièce d'identité sans être absolument sûr du destinataire.",
+            "p_contact": "Oui. Vérifiez toujours auprès de l'administration officielle avant d'envoyer des justificatifs.",
+            "p_min": "Oui. Ne donnez que le strict minimum. Les impôts ont déjà vos infos, ils ne les redemandent pas ainsi.",
+            "p_cb": "Oui. Ne laissez pas traîner vos infos bancaires, même si ici c'est surtout l'identité qui est visée.",
+            "p_antivirus": "L'antivirus ne peut pas savoir si vous envoyez vos papiers à une mauvaise personne.",
+            "p_liens": "Oui. Vous êtes arrivé sur ce faux site via un lien trompeur. Vérifiez toujours l'adresse (URL).",
+            "p_save": "La sauvegarde ne protège pas contre le vol de vos documents si vous les envoyez vous-même.",
+            "p_mdp": "Le problème n'est pas votre mot de passe, mais l'envoi volontaire de documents.",
+            "p_double": "Cela protège vos comptes, mais n'empêche pas l'envoi de documents par mail ou formulaire.",
+            "p_maj": "Les mises à jour ne détectent pas les faux sites administratifs.",
+            "p_sites": "Ce n'est pas un site de téléchargement illégal, c'est une imitation de site officiel.",
+            "p_app": "Il n'y a pas d'application impliquée ici."
+        },
+        "m_virus": {
+            "r_perte": "Oui. Un virus peut effacer, corrompre ou bloquer l'accès à toutes vos photos et fichiers.",
+            "r_vol_id": "Oui. Un virus espion peut fouiller dans votre téléphone et voler des copies de vos papiers.",
+            "r_bancaire": "Oui. Certains virus enregistrent ce que vous tapez (mots de passe bancaires) pour le voler.",
+            "r_identite": "Pas directement. Le virus vole des données, mais l'usurpation est une étape ultérieure humaine.",
+            "r_escroquerie": "Le virus est l'outil technique, l'escroquerie est la conséquence financière, mais le risque premier est technique.",
+            "p_app": "Oui ! Ne téléchargez des applications que sur les magasins officiels (Play Store, App Store).",
+            "p_antivirus": "Oui ! Sur téléphone comme sur PC, un antivirus peut bloquer l'installation d'une application piégée.",
+            "p_sites": "Oui. Évitez de télécharger des jeux « gratuits » sur des sites inconnus, ils sont souvent piégés.",
+            "p_maj": "Oui. Les mises à jour corrigent les failles que les virus utilisent pour s'installer.",
+            "p_save": "Oui. Si le virus efface tout, votre sauvegarde externe est votre seule chance de tout récupérer.",
+            "p_contact": "Il n'y a pas de contacts (ou faux) sur les sites où le virus est attrapé.",
+            "p_liens": "Oui. Le virus arrive souvent par un lien de téléchargement douteux.",
+            "p_info_perso": "Ne rien dire est bien, mais le virus vole les infos directement dans le téléphone.",
+            "p_mdp": "Un mot de passe fort ne bloque pas l'installation d'un virus si vous dites « Oui » à l'installation.",
+            "p_double": "La double authentification ne protège pas votre appareil contre l'infection par un virus.",
+            "p_cb": "Effacer sa carte est prudent, mais n'empêche pas le virus de nuire à l'appareil.",
+            "p_min": "Limiter ses infos publiques n'arrête pas un virus une fois installé.",
+            "p_doc": "Ne pas envoyer de doc est bien, mais le virus peut les voler s'ils sont stockés dans le téléphone."
+        }
+    };
+
+    const DB = {
+        cards: {
+            "m_support": { type: "menace", title: "Arnaque au faux support technique", why: "Inciter la victime à payer un pseudo-dépannage informatique et en profiter pour lui dérober ses informations personnelles et bancaires.", how: "Faire croire à un problème technique grave impliquant un risque de perte de données ou d'usage de l'équipement avec un écran qui paraît bloqué.", realLife: "Alors qu'il gare sa voiture, un inconnu interpelle le conducteur : « Attention ! Au bruit que fait votre moteur, votre voiture doit avoir un énorme problème ! Si vous ne faites rien vous risquez de mettre votre vie en danger! Laissez-moi regarder, je suis garagiste : je peux vous réparer votre voiture en urgence ».<br> Paniqué et n'y connaissant rien, le conducteur laisse la personne bricoler trente minutes dans son moteur. Celle-ci demandant à être payée pour cette réparation, il lui remet une somme conséquente.<br> <b>Résultat : La victime a payé très cher une prestation infondée à ce soit-disant « garagiste », alors que sa voiture n'avait aucun problème !</b>" },
+            "m_piratage": { type: "menace", title: "Piratage de compte", why: "Dérober des informations personnelles, professionnelles et/ou bancaires pour en faire un usage frauduleux.", how: "Prise de contrôle d'un ou plusieurs comptes en ligne, en raison d'un mot de passe trop simple, communiqué sans le savoir suite à un message frauduleux ou utilisé sur plusieurs sites dont l'un a été piraté.", realLife: "La victime possède une voiture qu'elle ne ferme jamais. Elle est stationnée devant chez elle et comme son quartier est tranquille, elle y laisse même les clés sous le siège conducteur.<br> Un soir, un inconnu s'empare du véhicule et après avoir grillé trois feux rouges renverse un cycliste avant de s'enfuir.<br><b>Résultat : les caméras de vidéoprotection ont bien filmé la scène et même si le visage du conducteur est flou, on relève l'immatriculation ! Devinez qui va devoir s'expliquer ?</b>" },
+            "m_phishing": { type: "menace", title: "Hameçonnage (phishing)", why: "Voler des informations sensibles (identité, adresses, comptes, mots de passe, données bancaires...) pour en faire un usage frauduleux.", how: "Faux message, SMS ou appel téléphonique d'un cybercriminel qui se fait passer pour une banque, un opérateur téléphonique, un site de commerce, un réseau social, une administration...", realLife: "Une personne vient sonner à la porte de la victime : elle se présente comme un agent spécialisé en placements financiers dont la société est certifiée par le ministère des Finances...<br> « Nous sommes mandatés pour vous proposer des investissements à hauts rendements et totalement déduits d'impôts. Si vous voulez en profiter, il faut rapidement constituer un dossier car ces mesures expirent la semaine prochaine ».<br> La victime fait entrer l'intéressé et après lui avoir signé un document dans lequel elle renseigne toutes ses informations bancaires, elle lui remet une somme conséquente.<br> <b>Résultat : Elle a transmis tous ces éléments à un parfait inconnu qui lui a dérobé son argent et risque de réutiliser ses informations financières pour d'autres escroqueries !</b>" },
+            "m_vol": { type: "menace", title: "Vol de données", why: "Utiliser des informations personnelles dérobées (identité, mot de passe, données bancaires...) pour en faire un usage frauduleux.", how: "Diverses techniques peuvent être employées pour dérober les données : hameçonnage, piratage de compte, infection par un virus...", realLife: "La victime a remis un dossier complet à un escroc pour la location d'un appartement (copies de document d'identité, bulletins de salaire, avis d'imposition, justificatif de domicile...). L'escroc a utilisé ces documents pour usurper son identité et souscrire à des crédits à la consommation.<br> <b>Résultat : Les banques font rembourser à la victime les crédits dont elle n'arrive pas à justifier l'origine. Elle se retrouve à découvert et interdite bancaire.</b>" },
+            "m_virus": { type: "menace", title: "Virus informatique", why: "Perturber le fonctionnement d'un appareil ou porter atteinte à ses données : vol ou destruction d'informations (documents, mots de passe, messages) ; espionnage ; utilisation de l'appareil pour en attaquer d'autres.", how: "Un appareil peut être infecté par diverses méthodes : en cliquant sur un lien ou une pièce jointe piégés ; en navigant sur un site malveillant ou en téléchargeant un jeu / logiciel / vidéo piratés.", realLife: "Un motocycliste gare sa moto devant chez lui pour déposer ses courses au lieu de la mettre dans son garage comme d'habitude. Un voisin avec lequel il est en conflit voit la moto et enfonce un clou sur le côté du pneu avant.<br> Après avoir rangé ses courses, la victime reprend sa moto pour aller au cinéma. Sur la route, lors d'un virage, le pneu éclate sous l'effet du clou.<br> <b>Résultat : La victime perd le contrôle de son véhicule et se retrouve à l'hôpital aux soins intensifs.</b>" },
+            
+            "r_identite": { type: "risk", title: "Usurpation d'identité", text: "L'usurpation d'identité est un délit qui désigne l'utilisation d'informations personnelles permettant d'identifier une personne sans son accord pour réaliser des actions frauduleuses.", example: "En fonction des informations recueillies, les escrocs peuvent commettre diverses infractions en se faisant passer pour la victime : escroquerie des proches, faux profil sur les réseaux sociaux, détournement d'allocations, souscription de crédit, ouverture de compte bancaire..." },
+            "r_bancaire": { type: "risk", title: "Vol de données bancaires", text: "En étant trompée par hameçonnage (par mail, SMS ou appel téléphonique), une personne peut être amenée à communiquer des informations bancaires (numéros de carte, code d'accès à son compte, ou encore des codes reçus par SMS de sa banque...).", example: "Avec des données bancaires dérobées, le cybercriminel peut effectuer des virements ou réaliser des achats en ligne qui seront débités de votre compte bancaire." },
+            "r_perte": { type: "risk", title: "Perte de données", text: "Suite au piratage d'un compte ou à l'infection d'un appareil par un virus, un cybercriminel peut modifier, supprimer ou rendre illisibles les données de la victime.", example: "Un rançongiciel est un type de virus utilisé par les cybercriminels pour chiffrer les données, les rendant illisibles pour la victime.<br> Pour pouvoir les récupérer, la victime se verra demander le paiement d'une rançon par les pirates." },
+            "r_escroquerie": { type: "risk", title: "Escroquerie financière", text: "L'escroquerie financière a comme objectif de tromper la victime pour lui soutirer de l'argent en utilisant différents prétextes qui peuvent jouer sur la crainte, l'urgence, l'empathie, l'attrait du gain...", example: "<ul><li>Le cybercriminel tente de se faire passer pour vous (par mail, SMS, compte de réseau social piraté) et contacte des personnes de votre entourage pour essayer de les arnaquer.</li><li>L'escroc fait semblant de dépanner la victime à distance pour lui facturer l'intervention, des logiciels anti-virus et/ou des abonnements fictifs</li><li>Le cybercriminel publie une annonce frauduleuse de location pour récupérer le montant de la caution en fournissant les documents qu'il a récupéré auprès d'une autre victime.</li></ul>" },
+            "r_vol_id": { type: "risk", title: "Vol de données d'identité", text: "En étant trompée par hameçonnage (par mail, SMS ou appel téléphonique), une personne peut être amenée à communiquer des informations ou documents d'identité (copie de la carte d'identité, bulletins de paye, avis d'imposition, justificatif de domicile...).", example: "Avec les documents d'identité dérobés, le cybercriminel peut ouvrir un compte bancaire à votre nom qui servira à des activités frauduleuses, souscrire un crédit que vous devrez rembourser, louer une voiture..." },
+
+            "p_info_perso": { type: "practice", imgIndex: 1, title: "Ne communiquez jamais d'informations personnelles...", conseil: "ne jamais communiquer d'informations personnelles par messagerie", text: "<b>Ne communiquez jamais d'informations personnelles et bancaires demandées par messagerie ou par téléphone</b> (mots de passe, numéro de sécurité sociale, code de validation par SMS...).<br> Aucune administration ou société commerciale sérieuse ne vous demandera ce type d'informations par mail, SMS ou téléphone." },
+            "p_liens": { type: "practice", imgIndex: 2, title: "Soyez vigilant avec les liens ou les pièces jointes...", conseil: "être vigilant avec les liens et les pièces jointes reçus", text: "<b>Soyez vigilant avec les liens ou les pièces jointes</b> contenus dans les mails ou SMS qui peuvent infecter votre appareil ou vous mener vers une page de phishing.<br> Vérifiez bien l'adresse du site avant de renseigner des données. En cas de doute, saisissez directement dans votre navigateur l'adresse du site concerné." },
+            "p_save": { type: "practice", imgIndex: 3, title: "Sauvegardez régulièrement vos données", conseil: "sauvegarder régulièrement vos données", text: "<b>Sauvegardez régulièrement vos données</b> pour pouvoir les retrouver en cas de panne, perte, vol, destruction ou piratage de vos appareils." },
+            "p_contact": { type: "practice", imgIndex: 4, title: "En cas de doute, contactez...", conseil: "contacter directement l'organisme concerné en cas de doute", text: "<b>En cas de doute, contactez si possible directement l'organisme concerné</b> pour confirmer le message ou l'appel que vous avez reçu." },
+            "p_mdp": { type: "practice", imgIndex: 5, title: "Utilisez des mots de passe différents et complexes", conseil: "utiliser des mots de passe forts et différents", text: "<b>Utilisez des mots de passe différents et complexes</b> pour chaque site et application utilisés. Si un de vos comptes était piraté, les cybercriminels pourraient accéder à vos autres comptes qui utilisent le même mot de passe." },
+            "p_double": { type: "practice", imgIndex: 6, title: "Activez la double authentification", conseil: "activer la double authentification sur vos comptes", text: "<b>Activez la double authentification</b> lorsque les sites ou les services le permettent, pour augmenter le niveau de sécurité de vos comptes. Il peut s'agir d'un code provisoire reçu par SMS ou par courrier électronique." },
+            "p_cb": { type: "practice", imgIndex: 7, title: "N'enregistrez pas vos coordonnées de carte bancaire", conseil: "ne pas enregistrer vos coordonnées bancaires sur les sites", text: "<b>N'enregistrez pas vos coordonnées de carte bancaire</b> pour des achats ponctuels sur un site internet.<br> Si vous les avez enregistrées, <b>supprimez-les</b>." },
+            "p_min": { type: "practice", imgIndex: 8, title: "Ne communiquez que le minimum d'informations", conseil: "ne communiquer que le strict minimum d'informations", text: "<b>Ne communiquez que le minimum</b> d'informations nécessaires sur les sites ou services en ligne. Désabonnez-vous ou supprimez les comptes (services, applications, sites internet) que vous n'utilisez plus." },
+            "p_doc": { type: "practice", imgIndex: 9, title: "Ne communiquez pas de documents d'identité...", conseil: "ne pas transmettre de documents d'identité sans certitude", text: "<b>Ne communiquez pas de documents d'identité</b> de manière inconsidérée (pièce d'identité, fiche de paie, avis d'imposition, RIB, etc.).<br> Seuls des personnes ou <u>organismes authentifiés avec certitude</u> (administrations, bailleur, employeur...) peuvent avoir besoin de certains de ces documents." },
+            "p_maj": { type: "practice", imgIndex: 10, title: "Faites les mises à jour...", conseil: "faire les mises à jour de vos appareils dès qu'elles sont disponibles", text: "<b>Faites les mises à jour de vos appareils, applications et logiciels dès qu'elles sont proposées</b> pour corriger leurs failles de sécurité qui peuvent être utilisées par des cybercriminels." },
+            "p_antivirus": { type: "practice", imgIndex: 11, title: "Utilisez un antivirus", conseil: "utiliser un antivirus à jour", text: "<b>Utilisez un antivirus</b> sur vos appareils (ordinateur, téléphone mobile, tablette). Vérifiez régulièrement qu'il est bien à jour et faites des analyses pour vous assurer que vos appareils ne sont pas infectés." },
+            "p_sites": { type: "practice", imgIndex: 12, title: "Évitez les sites internet non sûrs ou illicites", conseil: "éviter les sites internet douteux ou illicites", text: "<b>Évitez les sites internet non sûrs ou illicites</b>, tels ceux qui hébergent des contrefaçons (musique, films, logiciels...) ou certains sites pornographiques qui peuvent infecter votre appareil avec un virus." },
+            "p_app": { type: "practice", imgIndex: 13, title: "N'installez pas d'application « piratés »", conseil: "ne pas installer d'applications piratées ou non officielles", text: "<b>N'installez pas d'application ou de programme « piratés »</b>, ou dont l'origine ou la réputation sont douteuses. Ils pourraient contenir des virus." }
+        },
+        glossary: {
+            "Application": {def: "Programme que vous installez sur votre téléphone mobile ou tablette pour effectuer une tâche spécifique (messagerie, banque, jeux). Assurez-vous de les télécharger uniquement depuis les boutiques officielles (Play Store, App Store).", link: null},
+            "Antivirus": {def: "Logiciel de sécurité qui détecte, bloque et supprime les programmes malveillants (comme les virus) de votre ordinateur, téléphone ou tablette. Il doit être régulièrement mis à jour pour être efficace.", link: "p_antivirus"},
+            "Barre d'adresse": {def: "Zone de votre navigateur où s'affiche l'adresse (URL) du site que vous visitez.", link: null},
+            "Cloud": {def: "Espace de stockage en ligne sur internet et protégé par le mot de passe de votre compte.", link: "p_save"},
+            "Compte": {def: "Espace personnel et sécurisé accessible avec un identifiant et un mot de passe.", link: null},
+            "Courriel": {def: "Message électronique envoyé via Internet. Il est souvent utilisé par les entreprises ou administrations, mais aussi par les fraudeurs pour se faire passer pour un organisme de confiance. Vérifiez bien l'adresse complète : nom@entreprise.com", link: null},
+            "Crypter": {def: "Action de rendre des informations illisibles à toute personne non autorisée pour garantir leur confidentialité.", link: "p_double"},
+            "Double authentification": {def: "sécurité supplémentaire qui demande une deuxième preuve de votre identité après le mot de passe, souvent un code reçu par SMS ou via une application. Elle rend vos comptes beaucoup plus difficiles à pirater.", link: "p_double"},
+            "E-mail": {def: "Message électronique envoyé via Internet. Il est souvent utilisé par les entreprises ou administrations, mais aussi par les fraudeurs pour se faire passer pour un organisme de confiance. Vérifiez bien l'adresse complète : nom@entreprise.com", link: null},
+            "Escroquerie": {def: "Fait d'utiliser la tromperie pour obtenir de l'argent ou des informations auprès d'une victime.", link: "r_escroquerie"},
+            "Faux support technique": {def: "Arnaque où un fraudeur se fait passer pour un technicien pour vous faire payer des services inutiles ou installer un virus.", link: "m_support"},
+            "Firewall": {def: "Barrière de sécurité qui contrôle ce qui entre et sort de votre ordinateur via Internet. Il empêche les accès non autorisés à votre appareil.", link: null},
+            "Hameçonnage": {def: "Technique frauduleuse (Phishing) pour tromper l'internaute.", link: "m_phishing"},
+            "HTTPS": {def: "Protocole sécurisé de navigation (cadenas fermé) permettant de crypter les échanges sur le web.", link: null},
+            "Identité numérique": {def: "L'ensemble des informations et des traces que vous laissez en ligne (profils, photos, commentaires).", link: "r_vol_id"},
+            "Keylogger": { def: "Programme malveillant, souvent caché, qui enregistre toutes les touches tapées sur votre clavier. Il permet aux fraudeurs de récupérer vos mots de passe, numéros de carte bancaire, ou conversations privées.", link: null },
+            "Lien": {def: "Mot ou une phrase cliquable sur un site web ou dans un message qui vous dirige vers une autre page Internet. Il faut toujours vérifier sa destination avant de cliquer, car il peut mener à un site frauduleux.", link: "p_liens"},
+            "Malware": {def: "Terme générique pour tout logiciel malveillant (virus, rançongiciel, etc.) créé pour nuire à un appareil ou voler des données.", link: "m_virus" },
+            "Mise à jour": {def: "Modification d'un logiciel ou d'un système qui corrige des problèmes et ajoute de nouvelles fonctions. Elles sont capitales pour boucher les 'failles de sécurité' que les cybercriminels pourraient exploiter.", link: "p_maj"},
+            "Mot de passe": {def: "Clé secrète qui vous donne accès à vos comptes et services en ligne. Pour une bonne protection, il doit être long, complexe et différent pour chaque site.", link: "p_mdp"},
+            "Navigateur": {def: "Logiciel que vous utilisez pour aller sur Internet, comme Chrome, Firefox, Edge ou Safari. Il est très important de le maintenir à jour pour garantir votre sécurité en ligne.", link: null},
+            "Pare-feu": {def: "Barrière de sécurité qui contrôle le trafic Internet et empêche les accès non autorisés à votre appareil.", link: null},
+            "Phishing": {def: "Technique frauduleuse (Hameçonnage) pour tromper l'internaute.", link: "m_phishing"},
+            "Pièce jointe": { def: "Fichier (document, photo) attaché à un e-mail ou un message. Soyez prudent, il peut contenir un virus.", link: "p_liens" },
+            "Piratage": {def: "Activité informatique illicite portant atteinte aux données d'autrui.", link: "m_piratage"},
+            "Piratage de compte": {def: "Action de prendre le contrôle d'un compte en ligne (messagerie, banque) grâce à un mot de passe volé ou deviné.", link: "m_piratage"},
+            "Pop-up": {def: "Fenêtre qui s'ouvre brusquement par-dessus la navigation.", link: null},
+            "Rançongiciel": {def: "Logiciel malveillant qui bloque les données et demande une rançon.", link: "r_perte"},
+            "Rannsomware": {def: "Logiciel malveillant qui bloque les données et demande une rançon.", link: "r_perte"},
+            "Réseau Social": {def: "Plateforme en ligne (comme Facebook, X) où les gens communiquent et partagent du contenu.", link: null},
+            "Sauvegarde": {def: "Action de copier ses fichiers importants sur un autre support (clé USB, disque dur externe ou en ligne/cloud). Cela  permet de retrouver les données en cas de panne, de perte ou de piratage de votre appareil.", link: "p_save"},
+            "Site": {def: "Ensemble de pages sur Internet que l'on visite via un navigateur. Il est important de vérifier que l'adresse (URL) affichée dans la barre d'adresse de votre navigateur est bien celle de l'organisme que vous souhaitez consulter.", link: null},
+            "SMS": {def: "Short Message Service. Message texte envoyé sur mobile.", link: null},
+            "Système d'exploitation": {def: "Programme principal qui gère toutes les fonctions d'un appareil (Windows, Android, iOS, macOS) et permet aux logiciels de fonctionner.", link: null},
+            "Télécharger": {def: "Action de transférer un fichier (document, application, etc.) depuis Internet vers votre appareil.", link: null },
+            "URL": {def: "L'adresse unique d'une page web que l'on voit dans la barre d'adresse du navigateur.", link: "p_liens"},
+            "Virus": {def: "Programme/Application/Logiciel malveillant infectant un appareil.", link: "m_virus"},
+            "Vol de données": {def: "Fait de récupérer et d'exploiter illégalement des informations confidentielles.", link: "r_vol_id"}
+        },
+
+        scenarios: [
+            { id: "carlos", title: "Carlos reçoit un SMS de Jeanne", visual: "sms", data: { sender: "JEANNE", content: "Bonjour Carlos ! Tu m'as dit que tu n'arrivais plus à te connecter à ton profil Facebook, pourtant je viens de recevoir un message de toi sur Facebook qui me disait :<br><br>« Salut ! J'ai découvert une super playlist, va l'écouter ! <span class='glossary-term' data-term='HTTPS'>https</span>://bit.ly/2N9ez3X »<br><br>Tu as pu ré-accéder à ton compte ? C'est bien toi qui m'a envoyé ce message ?" }, narrative: "Carlos reçoit un SMS de Jeanne", hints: ["Carlos n'a plus accès à son compte, ce qui indique qu'il a probablement été <span class='glossary-term' data-term='Piratage'>piraté</span> : le message reçu par Jeanne aurait donc été rédigé par un cybercriminel", "Ce message invite à cliquer sur un lien", "Le lien n'est pas clair et on ne sait pas sur quoi on va arriver"], solution: { menace: "m_piratage", risks: ["r_identite", "r_escroquerie", "r_vol_id", "r_bancaire", "r_perte"], practices: ["p_mdp", "p_double", "p_antivirus", "p_liens"] } },
+            { id: "khadija", title: "Khadija reçoit un SMS", visual: "sms", data: { sender: "+33 6 39 98 24 32", content: "Chronopost :<br>L'acheminement de votre colis a rencontré une erreur.<br>Mettez à jour votre livraison via :<br>http://colis-chrnopost-online.com/" }, narrative: "Khadija reçoit un <span class='glossary-term' data-term='SMS'>SMS</span>", hints: ["Le numéro de téléphone de l'émetteur du SMS est un numéro de téléphone portable : il commence par 06, ce qui est inhabituel pour une société de livraison", "Le message incite à cliquer sur un lien", "Le message est vague et ne donne pas d'informations précises"], solution: { menace: "m_phishing", risks: ["r_bancaire", "r_escroquerie", "r_vol_id", "r_identite"], practices: ["p_info_perso", "p_liens", "p_contact", "p_mdp"] } },
+            { id: "elise", title: "Élise reçoit un mail d'un proche", visual: "mail", data: { from: "Jean <jean.pattel@monmail.com>", subject: "Besoin de ton aide !", content: "Je suis en Espagne pour conclure une affaire importante. Malheureusement, j'ai eu un souci et n'ai plus de téléphone. Je te donerai plus de détail à mon retour. <br>J'aimerais s'il te plaît, que tu me vienne en aide en m'achetant au bureau de tabac 4 coupons de rechargement PCS de 250€ puis transmets moi les codes de chaque coupon. Je te rembourserais dés mon retour,<br> S'il te plait je comte sur ta discrétion, <br>Je reste dans l'attente de tes nouvelles,<br> Merci encore d'avance<br>Jean" }, narrative: "Élise reçoit un mail d'un proche", hints: ["Le mail demande l'envoi d'une somme d'argent", "Le mail ne donne pas de détails, il n'y a pas de précision sur la nature du « souci »", "La rédaction du mail est maladroite et il y a des fautes d'orthographe pouvant être inhabituelles", "Le mail insiste sur l'urgence et un besoin de discrétion non justifié"], solution: { menace: "m_piratage", risks: ["r_identite", "r_escroquerie", "r_vol_id", "r_bancaire", "r_perte"], practices: ["p_mdp", "p_double", "p_antivirus", "p_liens"] } },
+            { id: "paula", title: "Paula reçoit un mail bancaire", visual: "mail", data: { from: "E-service Clients CG <CG_secure4.noreply@radiopwn.com>", subject: "Au sujet de la sécurité de votre compte !", content: "<b>SÉCURITÉ RENFORCÉE POUR CONSULTER VOS COMPTES EN LIGNE</b><br>Chère cliente, cher client,<br>Conformément à la loi PSD2 pour la sécurité des paiements en ligne et afin d'arrêter l'utilisation frauduleuse des cartes bancaires sur Internet, notre équipe est dotée d'un dispositif de contrôle des transactions.<br><br>Ce service est entièrement gratuit !<br><br>Remarque : cette opération est obligatoire et à faire sous 48H sous peine de suspension de votre compte.<br><button style='background:#2563eb; color:white; padding:5px;'>ME CONNECTER</button>" }, narrative: "Paula reçoit un mail bancaire", hints: ["Une adresse mail d'origine suspecte", "Une mention du caractère obligatoire", "Une mention d'urgence sous peine d'une sanction", "Une incitation à cliquer sur un lien"], solution: { menace: "m_phishing", risks: ["r_bancaire", "r_escroquerie", "r_vol_id", "r_identite"], practices: ["p_info_perso", "p_liens", "p_contact", "p_mdp"] } },
+            { id: "bertrand", title: "Bertrand navigue sur Internet", visual: "browser_popup", data: { url: "http://...", popup: "🛡 ** ATTENTION ! **<br>Votre ordinateur a été bloqué : votre ordinateur nous a alerté, il a été infecté par un <span class='glossary-term' data-term='Virus'>virus</span>. Vos informations personnelles sont en train d'être volées ; vous devez nous contacter immédiatement pour recevoir de l'aide de notre équipe d'ingénieurs.<br><br>Appelez-nous dans moins de 5 min pour la réparation de votre ordinateur.<br>> 03 53 01 08 65 (appel gratuit)" }, narrative: "Bertrand navigue sur Internet. Soudain, une fenêtre apparaît.", hints: ["L'ordinateur semble bloqué sur cet écran", "Le message est alarmant et insiste sur l'urgence de la situation", "Bertrand est incité à appeler un numéro inconnu"], solution: { menace: "m_support", risks: ["r_escroquerie"], practices: ["p_liens", "p_antivirus", "p_sites"] } },
+            { id: "fatou", title: "Fatou croit envoyer des documents aux Impôts", visual: "browser", data: { url: "https://1pot.com/mon-compte", content: "" }, narrative: "Fatou croit envoyer des documents aux Impôts", hints: ["L'adresse du site ne correspond pas à l'adresse officielle du site des Impôts", "Les Impôts n'ont pas besoin de ce type d'informations : ils les ont déjà", "Un remboursement des Impôts se fait par virement automatique sur votre compte"], solution: { menace: "m_vol", risks: ["r_vol_id", "r_identite", "r_escroquerie"], practices: ["p_contact", "p_cb", "p_min", "p_doc", "p_liens"] } },
+            { id: "helena", title: "Helena a téléchargé un jeu mobile", visual: "sms_install", data: { sender: "Snake", content: "Autorisez-vous Snake à accéder à :<br>- vos contacts<br>- vos messages<br>- vos fichiers<br>- votre micro / caméra<br>- vos comptes" }, narrative: "Helena a téléchargé un jeu mobile sur un site qu'elle ne connaît pas. Quand elle l'ouvre, une fenêtre apparaît.", hints: ["L'application est un jeu mobile : le besoin d'avoir autant d'autorisations n'est pas justifié et est suspect", "L'application n'a pas été téléchargée sur un site officiel"], solution: { menace: "m_virus", risks: ["r_perte", "r_vol_id", "r_bancaire"], practices: ["p_save", "p_maj", "p_antivirus", "p_sites", "p_app","p_liens"] } }
+        ]
+    };
+
+    /* =========================================
+       LOGIQUE JAVASCRIPT
+       ========================================= */
+    
+    // Définition des fonctions utilitaires au début pour éviter les erreurs de référence
+    function processGlossary(text) {
+        let processed = text;
+        Object.keys(DB.glossary).forEach(term => {
+            const regex = new RegExp(`\\b${term}\\b`, 'gi');
+            processed = processed.replace(regex, `<span class="clickable-word glossary-term" data-term="${term}" style="color:var(--blue-situation); border-bottom:1px dotted;">$&</span>`);
+        });
+        return processed;
+    }
+
+    function showDefinition(term) {
+        const key = Object.keys(DB.glossary).find(k => k.toLowerCase() === term.toLowerCase());
+        if (key) {
+            const data = DB.glossary[key];
+            document.getElementById('def-term').textContent = key;
+            let html = `<p>${data.def}</p>`;
+            if (data.link) {
+                html += `<button class="btn-primary" onclick="closeModal('modal-definition'); showCardDetail('${data.link}')">Voir la fiche liée</button>`;
+            }
+            document.getElementById('def-text').innerHTML = html;
+            openModal('modal-definition');
+        }
+    }
+    
+    function openGlossary() {
+        const list = document.getElementById('glossary-list');
+        list.innerHTML = '';
+        Object.keys(DB.glossary).sort().forEach(term => {
+            const data = DB.glossary[term];
+            const div = document.createElement('div');
+            div.className = 'glossary-item';
+            
+            let btn = '';
+            if(data.link) {
+                btn = `<button class="glossary-btn" onclick="showCardDetail('${data.link}')">Voir Fiche</button>`;
+            }
+            
+            div.innerHTML = `
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button class="btn-audio" style="width:24px; height:24px; font-size:0.8rem;" onclick="TTS.speak('${term}. ${data.def.replace(/'/g, "\\'")}', this)">🔊</button>
+                    <strong>${term}</strong> : ${data.def}
+                </div>${btn}
+            `;
+            list.appendChild(div);
+        });
+
+        // SECTION LIENS VERS TOUTES LES FICHES
+        const linkArea = document.getElementById('glossary-all-links');
+        linkArea.innerHTML = '';
+        const groups = { m: [], r: [], p: [] };
+        Object.keys(DB.cards).forEach(id => {
+            const prefix = id.split('_')[0];
+            if (groups[prefix]) groups[prefix].push(id);
+        });
+
+        const createGroup = (ids, label, cls) => {
+            if(ids.length === 0) return;
+            const container = document.createElement('div');
+            container.className = 'glossary-links-group';
+            container.innerHTML = `<div style="width:100%; font-weight:bold; margin-bottom:5px; color:var(--text-light);">${label}</div>`;
+            ids.forEach(id => {
+                const btn = document.createElement('button');
+                btn.className = `glossary-link-btn ${cls}`;
+                btn.textContent = DB.cards[id].title;
+                btn.onclick = () => { closeModal('modal-glossary'); showCardDetail(id); };
+                container.appendChild(btn);
+            });
+            linkArea.appendChild(container);
+        };
+
+        createGroup(groups.m, "Menaces", "m");
+        createGroup(groups.r, "Risques", "r");
+        createGroup(groups.p, "Bonnes Pratiques", "p");
+
+        openModal('modal-glossary');
+    }
+
+    function showCardDetail(id) {
+        TTS.stop();
+        const data = DB.cards[id];
+        const modalBody = document.getElementById('modal-content-body');
+        document.getElementById('modal-title').textContent = data.title;
+        
+        const speakBtn = document.getElementById('modal-speak-btn');
+        speakBtn.setAttribute("aria-label", "Écouter la fiche : " + data.title);
+        
+        let textToRead = data.title + ". ";
+
+        let headerColor = getColor(id);
+        document.querySelector('#modal-card-detail .modal-header').style.borderLeft = `8px solid ${headerColor}`;
+
+        let content = '';
+
+        if (data.type === 'menace') {
+            textToRead += "Pourquoi ? " + data.why + ". Comment ? " + data.how + ". Dans la vraie vie : " + data.realLife;
+            content = `
+                <div class="modal-section">
+                    <div class="section-header txt-blue"><div class="section-icon icon-why">?</div> Pourquoi ?</div>
+                    <p>${processGlossary(data.why)}</p>
+                </div>
+                <div class="modal-section">
+                    <div class="section-header txt-orange"><div class="section-icon icon-how">!</div> Comment ?</div>
+                    <p>${processGlossary(data.how)}</p>
+                </div>
+                <div class="modal-section">
+                    <div class="section-header txt-green"><div class="section-icon icon-real">👁️</div> Dans la vraie vie</div>
+                    <div class="real-life-box">${processGlossary(data.realLife)}</div>
+                </div>
+            `;
+        } else if (data.type === 'risk') {
+            textToRead += "Explication : " + data.text + ". Exemple concret : " + data.example;
+            content = `
+                <div class="modal-section">
+                    <div class="section-header txt-orange">Explication</div>
+                    <p>${processGlossary(data.text)}</p>
+                </div>
+                <div class="modal-section">
+                    <div class="section-header txt-red">Exemple Concret</div>
+                    <div class="real-life-box">${processGlossary(data.example)}</div>
+                </div>
+            `;
+        } else {
+            textToRead += data.text;
+            content = `
+                <div class="modal-section">
+                    <div class="section-header txt-green">La bonne pratique</div>
+                    <p style="font-size:1.1rem; line-height:1.6;">${processGlossary(data.text)}</p>
+                </div>
+            `;
+        }
+        
+        speakBtn.onclick = function() { TTS.speak(textToRead, speakBtn); };
+        
+        let imgSrc = '';
+        if (data.type === 'practice') {
+             if (data.imgIndex && data.imgIndex !== 4) {
+                 imgSrc = `images/mallette cyber - ${data.imgIndex}.jpg`;
+             } else {
+                 imgSrc = `images/${id}.png`;
+             }
+        } else if (data.type === 'risk') {
+             imgSrc = `images/${id}.jpg`;
+        } else {
+             imgSrc = `images/${id}.png`;
+        }
+        
+        content += `<div style="text-align:center; margin-top:20px;"><img src="${imgSrc}" style="max-width:100%; max-height:200px; border-radius:8px;" alt="Illustration ${data.title}" onerror="this.style.display='none'"></div>`;
+
+        modalBody.innerHTML = content;
+        
+        attachGlossaryEvents();
+        openModal('modal-card-detail');
+    }
+
+    function openSettings() {
+        TTS.populateVoices();
+        openModal('modal-settings');
+    }
+
+    function updateGlobalProgress() {
+        const container = document.getElementById('global-progress');
+        if(!container) return;
+        container.innerHTML = '';
+        gameQueue.forEach((_, idx) => {
+            const dot = document.createElement('div');
+            dot.className = 'step-dot';
+            if (idx < currentScenarioIndex) dot.classList.add('done');
+            if (idx === currentScenarioIndex) dot.classList.add('active');
+            container.appendChild(dot);
+        });
+    }
+
+    function triggerCelebration() {
+        const overlay = document.getElementById('celebration-overlay');
+        if(overlay) overlay.style.display = 'block';
+        if(typeof startConfetti === 'function') startConfetti();
+        
+        setTimeout(() => {
+            if(typeof stopConfetti === 'function') stopConfetti();
+            if(overlay) overlay.style.display = 'none';
+        }, 5000);
+    }
+
+    let gameQueue = [];
+    let currentScenarioIndex = 0;
+    let currentScenario = null;
+    let currentPhase = 0; // 0=Menace, 1=Risques, 2=Pratiques
+    let hintLevel = 0;
+    let scenarioState = { 0: [], 1: [], 2: [] };
+    let maxPhaseReached = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        populateScenarioSelect();
+        initTheme(); 
+        TTS.init(); 
+        
+        document.addEventListener('keydown', trapTabKey);
+        
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                if (event.target.id === 'modal-phase-success') return;
+                closeModal(event.target.id);
+                TTS.stop();
+            }
+        }
+    });
+
+    function populateScenarioSelect() {
+        const select = document.getElementById('scenario-select');
+        DB.scenarios.forEach((s, index) => {
+            const opt = document.createElement('option');
+            opt.value = index;
+            opt.textContent = `${index + 1}. ${s.title}`;
+            select.appendChild(opt);
+        });
+    }
+
+    function startGame(mode) {
+        let selection = [...DB.scenarios];
+        selection.sort(() => Math.random() - 0.5);
+
+        if (mode === 1) selection = selection.slice(0, 1);
+        else if (mode === 3) selection = selection.slice(0, 3);
+        else if (mode === 5) selection = selection.slice(0, 5);
+
+        gameQueue = selection;
+        currentScenarioIndex = 0;
+        launchGameLoop();
+    }
+
+    function startSpecificGame() {
+        const idx = document.getElementById('scenario-select').value;
+        gameQueue = [DB.scenarios[idx]];
+        currentScenarioIndex = 0;
+        launchGameLoop();
+    }
+
+    function returnHome() {
+        if(confirm("Quitter la partie ?")) {
+            TTS.stop();
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('home-screen').style.display = 'flex';
+        }
+    }
+
+    function launchGameLoop() {
+        document.getElementById('home-screen').style.display = 'none';
+        TTS.stop();
+        
+        const gameScreen = document.getElementById('game-screen');
+        if(window.innerWidth >= 1024) gameScreen.style.display = 'grid';
+        else gameScreen.style.display = 'block';
+
+        loadScenario(gameQueue[currentScenarioIndex]);
+    }
+
+    function loadScenario(scenario) {
+        currentScenario = scenario;
+        currentPhase = 0;
+        maxPhaseReached = 0;
+        hintLevel = 0;
+        scenarioState = { 0: [], 1: [], 2: [] };
+
+        // 1. Colonne Gauche
+        document.getElementById('scenario-text').innerHTML = processGlossary(scenario.narrative);
+        renderVisual(scenario.visual, scenario.data, scenario.id);
+        renderHints();
+        
+        // 2. Colonne Droite : Affiche Intro, Cache Gameplay
+        document.getElementById('intro-panel').style.display = 'flex';
+        document.getElementById('gameplay-panel').style.display = 'none';
+
+        updateSidebarDisplay(0);
+        updateGlobalProgress();
+    }
+    
+    // Fonction déclenchée par le bouton "Démarrer l'analyse"
+    function startLevel() {
+        document.getElementById('intro-panel').style.display = 'none';
+        document.getElementById('gameplay-panel').style.display = 'flex';
+        loadPhase(0);
+    }
+
+    function updateSidebarDisplay(phase) {
+        const panel = document.querySelector('.situation-panel');
+        const hintsBox = document.getElementById('hints-box');
+        const inventoryBox = document.getElementById('inventory-box');
+        const contentWrapper = document.getElementById('situation-content-wrapper');
+
+        // GESTION AFFICHAGE INDICES
+        if (phase === 0) {
+            hintsBox.style.display = 'block';
+        } else {
+            hintsBox.style.display = 'none';
+        }
+
+        const isCurrentlyTop = inventoryBox.classList.contains('top-position');
+        const shouldBeTop = (phase > 0);
+
+        if (isCurrentlyTop !== shouldBeTop) {
+            inventoryBox.classList.remove('slide-in');
+            void inventoryBox.offsetWidth;
+            if (shouldBeTop) {
+                inventoryBox.classList.add('top-position');
+                panel.insertBefore(inventoryBox, contentWrapper);
+            } else {
+                inventoryBox.classList.remove('top-position');
+                panel.appendChild(inventoryBox);
+            }
+            inventoryBox.classList.add('slide-in');
+        }
+        
+        updateInventory();
+    }
+
+    function renderVisual(type, data, id) {
+        const container = document.getElementById('visual-container');
+        let html = '';
+        
+        // Bouton audio décalé pour ne pas gêner
+        const readBtn = `<button class="btn-audio" onclick="TTS.readVisual(currentScenario.data, '${type}', this)" title="Lire le contenu" aria-label="Écouter le visuel" style="position:absolute; top:5px; right:45px; z-index:20;">🔊</button>`;
+
+        if (type === 'sms' || type === 'sms_install') {
+            let avatar = '👤';
+            let titleText = data.sender;
+            
+            if (id === 'helena') {
+                avatar = '🐍'; 
+            }
+
+            html = `
+            <div class="sim-phone">
+                ${readBtn}
+                <div class="phone-header">
+                    <div class="phone-avatar">${avatar}</div>
+                    <div>${titleText}</div>
+                </div>
+                <div class="phone-body">
+                    <div class="msg-bubble">${processGlossary(data.content)}</div>
+                    ${type === 'sms_install' ? '<button class="btn-win-ok">OK</button>' : ''}
+                </div>
+                <div class="phone-input"><span>Message...</span> <span class="phone-btn">Envoyer</span></div>
+            </div>`;
+        } else if (type === 'mail') {
+            // Extraction Nom/Email si possible
+            let fromName = data.from;
+            let fromEmail = "";
+            if (data.from.includes('<')) {
+                const parts = data.from.split('<');
+                fromName = parts[0].trim();
+                fromEmail = parts[1].replace('>', '').trim();
+            }
+
+            // Destinataire
+            let toEmail = "moi@monmail.com";
+            if (id === 'paula') toEmail = "paula@monmail.com";
+            if (id === 'elise') toEmail = "elise.pattel@monmail.com";
+
+            html = `
+            <div class="sim-window" style="position:relative;">
+                ${readBtn}
+                <div class="win-header">
+                    <div class="win-title">✉️ ${data.subject} - Message</div>
+                    <div class="win-controls">
+                        <div class="win-btn">_</div><div class="win-btn">□</div><div class="win-btn close">✕</div>
+                    </div>
+                </div>
+                <div class="mail-toolbar">Répondre | Transférer | Supprimer</div>
+                <div class="mail-headers">
+                    <div class="mail-row">
+                        <span class="mail-label">De:</span> 
+                        <div class="mail-val">
+                            <strong>${fromName}</strong> 
+                            ${fromEmail ? `<small>&lt;${fromEmail}&gt;</small>` : ''}
+                        </div>
+                    </div>
+                    <div class="mail-row">
+                        <span class="mail-label">À:</span> 
+                        <div class="mail-val">${toEmail}</div>
+                    </div>
+                    <div class="mail-row"><span class="mail-label">Objet:</span> <div class="mail-val">${data.subject}</div></div>
+                </div>
+                <div class="mail-content">${processGlossary(data.content)}</div>
+            </div>`;
+        } else if (type === 'browser' || type === 'browser_popup') {
+            
+            let contentHtml = '';
+            let popupHtml = '';
+            let urlVal = data.url;
+            let winTitle = "Navigateur Internet";
+            let mainClass = "";
+
+            if (id === 'fatou') {
+                winTitle = "impots.gouv.fr";
+                urlVal = "https://1pot.com/mon-compte";
+                contentHtml = `
+                    <div class="fatou-layout">
+                        <div class="fatou-banner">Site officielle des Impôts</div>
+                        <p style="margin-bottom:20px;">Pour obtenir votre remboursement, veuillez fournir les documents suivants :</p>
+                        
+                        <div class="fatou-label">➤ Une copie de votre carte d'identité</div>
+                        <button class="fatou-btn">Déposez votre document ici...</button>
+                        
+                        <div class="fatou-label">➤ Un justificatif de domicile</div>
+                        <button class="fatou-btn">Déposez votre document ici...</button>
+                        
+                        <div class="fatou-label">➤ Votre dernier bulletin de paye</div>
+                        <button class="fatou-btn">Déposez votre document ici...</button>
+
+                        <button class="fatou-submit">ENVOYER</button>
+                    </div>
+                `;
+            } else if (id === 'bertrand') {
+                mainClass = "grayed";
+                popupHtml = `
+                    <div class="fake-popup pulse-red">
+                        <div class="popup-header"><span>Message de la page web</span><span>✕</span></div>
+                        <div class="popup-body">
+                            <div class="popup-warning">${processGlossary(data.popup)}</div>
+                            <button class="btn-win-ok">OK</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                if (type === 'browser') contentHtml = `<div style="padding:10px;">${processGlossary(data.content)}</div>`;
+                if (type === 'browser_popup') {
+                     popupHtml = `
+                    <div class="fake-popup">
+                        <div class="popup-header"><span>Message de la page web</span><span>✕</span></div>
+                        <div class="popup-body">
+                            <div class="popup-warning">${processGlossary(data.popup)}</div>
+                            <button class="btn-win-ok">OK</button>
+                        </div>
+                    </div>`;
+                }
+            }
+
+            html = `
+            <div class="sim-window ${mainClass}" style="height:480px; position:relative;">
+                ${readBtn}
+                <div class="win-header">
+                    <div class="win-title">${winTitle}</div>
+                    <div class="win-controls">
+                        <div class="win-btn">_</div><div class="win-btn close">✕</div>
+                    </div>
+                </div>
+                <div class="browser-bar">
+                    <div style="font-size:1.2rem;">⬅ ➡ ↻</div>
+                    <div class="url-field">
+                        <span>${urlVal}</span>
+                        <span style="font-weight:bold; font-size:1.2rem; cursor:pointer;">⋮</span>
+                    </div>
+                </div>
+                <div class="browser-content">
+                    ${contentHtml}
+                    ${popupHtml}
+                </div>
+            </div>`;
+        }
+        
+        const imgPath = `images/s_${id}.png`;
+        html += `<img src="${imgPath}" class="illustration" style="max-width:100%; max-height:300px; display:none;" onload="this.style.display='block'; if(this.previousElementSibling) { this.previousElementSibling.style.display='none'; }">`;
+        
+        container.innerHTML = html;
+        attachGlossaryEvents();
+    }
+
+    function renderHints() {
+        document.getElementById('hints-list').innerHTML = ''; 
+        document.getElementById('hint-counter').textContent = `0/${currentScenario.hints.length}`;
+        document.getElementById('btn-reveal-hint').style.display = 'block';
+    }
+
+    function revealHint() {
+        if (hintLevel < currentScenario.hints.length) {
+            const hintText = currentScenario.hints[hintLevel];
+            const div = document.createElement('div');
+            div.className = 'hint-item';
+            div.innerHTML = `<span>🔎</span> <span>${processGlossary(hintText)}</span>`;
+            document.getElementById('hints-list').appendChild(div);
+            hintLevel++;
+            document.getElementById('hint-counter').textContent = `${hintLevel}/${currentScenario.hints.length}`;
+            if (hintLevel === currentScenario.hints.length) document.getElementById('btn-reveal-hint').style.display = 'none';
+            attachGlossaryEvents();
+        }
+    }
+    
+    function tryNavigatePhase(idx) {
+        if (idx <= maxPhaseReached) {
+            loadPhase(idx);
+        }
+    }
+
+    function loadPhase(phaseIndex) {
+        currentPhase = phaseIndex;
+        updateSidebarDisplay(currentPhase);
+        
+        ['menace', 'risk', 'practice'].forEach((t, i) => {
+            const el = document.getElementById(`tab-${t}`);
+            el.classList.toggle('active', i === currentPhase);
+            if (i <= maxPhaseReached) el.classList.add('unlocked');
+            else el.classList.remove('unlocked');
+        });
+
+        const qTitle = document.getElementById('question-title');
+        const instruction = document.getElementById('instruction');
+        const grid = document.getElementById('cards-area');
+        const nextBtn = document.getElementById('btn-next');
+        const statusMsg = document.getElementById('status-msg');
+        const remainingBadge = document.getElementById('remaining-count');
+
+        grid.innerHTML = '';
+        nextBtn.style.display = 'none';
+        statusMsg.textContent = '';
+        remainingBadge.style.display = 'none';
+
+        const isPhaseFrozen = (phaseIndex < maxPhaseReached);
+
+        let choices = [];
+        let correctIds = [];
+        let foundIds = scenarioState[phaseIndex];
+
+        if (phaseIndex === 0) {
+            qTitle.innerHTML = `<img src="images/espionner.png" style="height:30px;"> 1. Identifiez la Menace`;
+            instruction.textContent = "Quelle est la cybermenace principale de cette situation ? (Une seule réponse possible)";
+            qTitle.className = "txt-red";
+            choices = Object.keys(DB.cards).filter(k => k.startsWith('m_'));
+            correctIds = [currentScenario.solution.menace];
+        } 
+        else if (phaseIndex === 1) {
+            qTitle.innerHTML = `<img src="images/eclair.png" style="height:30px;"> 2. Identifiez les Risques`;
+            instruction.textContent = "Quels sont les risques encourus ? (Plusieurs réponses possibles)";
+            qTitle.className = "txt-orange";
+            choices = Object.keys(DB.cards).filter(k => k.startsWith('r_'));
+            correctIds = currentScenario.solution.risks;
+        } 
+        else {
+            qTitle.innerHTML = `<img src="images/bouclier.png" style="height:30px;"> 3. Les Bonnes Pratiques`;
+            instruction.textContent = "Que faut-il faire pour se protéger ? (Plusieurs réponses possibles)";
+            qTitle.className = "txt-green";
+            choices = Object.keys(DB.cards).filter(k => k.startsWith('p_'));
+            correctIds = currentScenario.solution.practices;
+        }
+
+        // Randomisation
+        choices.sort(() => Math.random() - 0.5);
+        
+        let displayFoundIds = isPhaseFrozen ? correctIds : foundIds;
+
+        const remaining = correctIds.length - displayFoundIds.length;
+        if (!isPhaseFrozen) {
+            if (remaining > 0) {
+                remainingBadge.textContent = `${remaining} restant(s)`;
+                remainingBadge.style.display = 'flex';
+            } else {
+                 remainingBadge.textContent = `Terminé`;
+                 remainingBadge.style.background = "#dcfce7";
+                 remainingBadge.style.color = "#166534";
+                 remainingBadge.style.display = 'flex';
+                 if(currentPhase === maxPhaseReached) {
+                     nextBtn.style.display = 'inline-flex';
+                 }
+            }
+        } else {
+             remainingBadge.textContent = `Phase Complétée`;
+             remainingBadge.style.background = "#e5e7eb";
+             remainingBadge.style.color = "#666";
+             remainingBadge.style.display = 'flex';
+        }
+
+        choices.forEach((id, index) => {
+            const cardData = DB.cards[id];
+            
+            // Container pour la perspective 3D
+            const container = document.createElement('div');
+            container.className = 'game-card-container';
+
+            const card = document.createElement('div');
+            card.className = 'game-card';
+            card.dataset.id = id;
+            card.setAttribute("role", "button");
+            card.setAttribute("aria-label", "Sélectionner " + cardData.title);
+            card.setAttribute("tabindex", "0"); 
+            
+            // Logique de classe
+            if (isPhaseFrozen) {
+                card.classList.add('frozen');
+                if (correctIds.includes(id)) {
+                    card.classList.add('correct');
+                }
+            } else {
+                if(foundIds.includes(id)) {
+                    card.classList.add('locked', 'correct');
+                    // Sur Desktop, on garde la carte retournée si elle est trouvée
+                    if(window.innerWidth >= 768) {
+                        card.classList.add('flipped');
+                    }
+                }
+            }
+            
+            // --- FRONT FACE ---
+            let imgSrc = '';
+            let fallbackIcon = '';
+            if (cardData.type === 'practice') {
+                if(cardData.imgIndex === 4) fallbackIcon = `<div class="gc-icon-fallback" style="display:block;">@</div>`;
+                else imgSrc = `images/mallette cyber - ${cardData.imgIndex}.jpg`;
+            } else if (cardData.type === 'risk') {
+                imgSrc = `images/${id}.jpg`;
+            } else {
+                imgSrc = `images/${id}.png`; 
+            }
+            let imgHtml = (!fallbackIcon) ? `<img src="${imgSrc}" class="gc-img" alt="" onload="this.style.display='block'" onerror="this.style.display='none'">` : '';
+
+            const frontFace = document.createElement('div');
+            frontFace.className = 'card-face card-front';
+            frontFace.innerHTML = `
+                <div class="card-number-badge">${index + 1}</div>
+                <div class="btn-info-corner" onclick="event.stopPropagation(); showCardDetail('${id}')" title="Voir la fiche">ℹ️</div>
+                <div class="gc-content">
+                    ${imgHtml}
+                    ${fallbackIcon}
+                    <span class="gc-title" style="color:${getColor(id)}">${cardData.title}</span>
+                </div>
+            `;
+            
+            // --- BACK FACE (Feedback) ---
+            const backFace = document.createElement('div');
+            backFace.className = 'card-face card-back';
+            // On prépare le contenu arrière
+            backFace.innerHTML = `
+                <div class="card-number-badge">${index + 1}</div>
+                <div class="btn-info-corner" onclick="event.stopPropagation(); showCardDetail('${id}')" title="Voir la fiche">ℹ️</div>
+            `; 
+            
+            card.appendChild(frontFace);
+            card.appendChild(backFace);
+            container.appendChild(card);
+            
+            // --- Interaction ---
+            card.addEventListener('keypress', function (e) { if (e.key === 'Enter') card.click(); });
+            card.onclick = (e) => {
+                if(e.target.classList.contains('btn-info-corner')) return;
+                if (isPhaseFrozen) return; 
+                checkAnswer(card, id, correctIds, backFace);
+            };
+
+            grid.appendChild(container);
+        });
+    }
+
+    function getColor(id) {
+        if(id.startsWith('m')) return 'var(--red-menace)';
+        if(id.startsWith('r')) return 'var(--orange-risk)';
+        return 'var(--green-practice)';
+    }
+
+    function checkAnswer(cardDiv, id, correctIds, backFaceElement) {
+        const isMobile = window.innerWidth < 768;
+        const isCorrect = correctIds.includes(id);
+        const menaceId = currentScenario.solution.menace;
+        const cardTitle = DB.cards[id].title;
+        let specificFeedback = null;
+        if (FEEDBACK_DATA[menaceId] && FEEDBACK_DATA[menaceId][id]) {
+            specificFeedback = FEEDBACK_DATA[menaceId][id];
+        }
+
+        // --- MOBILE : Toast Feedback ---
+        if(isMobile) {
+            if (cardDiv.classList.contains('locked')) return; 
+            
+            if(isCorrect) {
+                cardDiv.classList.add('correct', 'locked');
+                showToast(specificFeedback || "✅ Bonne réponse !", "success");
+                updateGameState(id, correctIds);
+            } else {
+                cardDiv.classList.add('wrong');
+                showToast(specificFeedback || "❌ Ce n'est pas la priorité.", "error");
+                cardDiv.animate([
+                    { transform: 'translateX(0)' }, { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }
+                ], { duration: 300 });
+            }
+            return;
+        }
+
+        // --- DESKTOP : Flip Logic (Toggle) ---
+        if (cardDiv.classList.contains('flipped')) {
+            cardDiv.classList.remove('flipped');
+            return; 
+        }
+        cardDiv.classList.add('flipped');
+
+        // Récupération badge & lien
+        const badgeHTML = `<div class="card-number-badge">${backFaceElement.querySelector('.card-number-badge')?.innerText || ''}</div>`;
+        const linkHTML = `<div class="btn-info-corner" onclick="event.stopPropagation(); showCardDetail('${id}')" title="Voir la fiche">ℹ️</div>`;
+
+        if(isCorrect) {
+            // Premier succès : on lock pour score
+            if (!cardDiv.classList.contains('correct')) {
+                cardDiv.classList.add('correct', 'locked');
+                updateGameState(id, correctIds);
+            }
+            
+            backFaceElement.className = 'card-face card-back back-correct';
+            backFaceElement.innerHTML = `
+                ${badgeHTML} ${linkHTML}
+                <div style="font-weight:bold; margin-bottom:5px; font-size:0.9rem; color:var(--text-main);">${cardTitle}</div>
+                <div style="font-weight:normal; font-size:0.85rem;">✅ ${specificFeedback || "Correct !"}</div>
+            `;
+        } else {
+            if (!cardDiv.classList.contains('wrong')) {
+                cardDiv.classList.add('wrong');
+            }
+
+            backFaceElement.className = 'card-face card-back back-wrong';
+            backFaceElement.innerHTML = `
+                ${badgeHTML} ${linkHTML}
+                <div style="font-weight:bold; margin-bottom:5px; font-size:0.9rem; color:var(--text-main);">${cardTitle}</div>
+                <div style="font-weight:normal; font-size:0.85rem;">❌ ${specificFeedback || "Ce n'est pas la priorité."}</div>
+            `;
+        }
+    }
+
+    function updateGameState(id, correctIds) {
+        if (!scenarioState[currentPhase].includes(id)) {
+            scenarioState[currentPhase].push(id);
+            updateInventory(id);
+        }
+
+        const remaining = correctIds.length - scenarioState[currentPhase].length;
+        const remainingBadge = document.getElementById('remaining-count');
+        
+        if (remaining === 0) {
+            remainingBadge.textContent = "Terminé";
+            remainingBadge.style.background = "#dcfce7";
+            remainingBadge.style.color = "#166534";
+            
+            document.getElementById('status-msg').textContent = "👏 Phase terminée !";
+            document.getElementById('status-msg').style.color = "var(--green-practice)";
+            
+            // Délai pour l'animation de retournement avant d'afficher la modale
+            setTimeout(() => {
+                showPhaseSuccessModal();
+                if (currentPhase === maxPhaseReached) {
+                    document.getElementById('btn-next').style.display = 'inline-flex';
+                }
+            }, 1200);
+        } else {
+             remainingBadge.textContent = `${remaining} restant(s)`;
+        }
+    }
+
+    function generateFinalNarrative() {
+        const menaceId = scenarioState[0][0]; 
+        const riskIds = scenarioState[1];
+        const practiceIds = scenarioState[2];
+        
+        if (!menaceId) return "";
+
+        const createClickable = (id) => {
+            const title = DB.cards[id].title;
+            const colorClass = id.startsWith('m') ? 'txt-red' : (id.startsWith('r') ? 'txt-orange' : 'txt-green');
+            return `<span class="clickable-word ${colorClass}" style="font-weight:bold;" onclick="showCardDetailLocked('${id}')">${title}</span>`;
+        };
+
+        const mTitle = createClickable(menaceId);
+        const mWhy = DB.cards[menaceId].why;
+        const mHow = DB.cards[menaceId].how;
+        
+        const rTitles = riskIds.map(id => createClickable(id));
+        let rText = "";
+        if (rTitles.length > 1) {
+            const last = rTitles.pop();
+            rText = rTitles.join(", ") + " et " + last;
+        } else {
+            rText = rTitles[0];
+        }
+
+        const pConseils = practiceIds.map(id => {
+            const c = DB.cards[id];
+            const txt = c.conseil ? c.conseil : c.title;
+            return `<span class="clickable-word" onclick="showCardDetailLocked('${id}')"><b>${txt}</b></span>`;
+        });
+        
+        let pText = "";
+        if (pConseils.length > 1) {
+            const last = pConseils.pop();
+            pText = pConseils.join(", ") + " ainsi que " + last;
+        } else {
+            pText = pConseils[0];
+        }
+
+        return `
+            La menace identifiée, ${mTitle} conduit à ce problème : ${mHow} Cette opération a pour but de ${mWhy} Les risques majeurs qui en résultent sont ${rText}.<br><br>
+            Pour se protéger de cette menace, il est important de : ${pText}.<br><br>
+            Bravo pour avoir identifié la menace concernée, ainsi que les divers risques associés. Mettez bien en pratique toutes les astuces que vous avez repérées !
+        `;
+    }
+
+    function showPhaseSuccessModal() {
+        TTS.stop();
+        const found = scenarioState[currentPhase];
+        const listContainer = document.getElementById('phase-recap-list');
+        listContainer.innerHTML = '';
+
+        document.getElementById('final-narrative-box').style.display = 'none';
+        document.getElementById('success-message-text').style.display = 'block';
+
+        if (currentPhase === 2) {
+            document.getElementById('success-message-text').style.display = 'none';
+            const narrativeHTML = generateFinalNarrative();
+            const narrativeBox = document.getElementById('final-narrative-box');
+            narrativeBox.innerHTML = narrativeHTML;
+            narrativeBox.style.display = 'block';
+        }
+
+        found.forEach(id => {
+            const data = DB.cards[id];
+            
+            let icon = '';
+            let color = '';
+            if (data.type === 'menace') { icon = 'images/espionner.png'; color = 'var(--red-menace)'; }
+            if (data.type === 'risk') { icon = 'images/eclair.png'; color = 'var(--orange-risk)'; }
+            if (data.type === 'practice') { icon = 'images/bouclier.png'; color = 'var(--green-practice)'; }
+
+            const div = document.createElement('div');
+            div.className = 'recap-item';
+            div.innerHTML = `
+                <div style="display:flex; align-items:center;">
+                    <img src="${icon}" onerror="this.style.display='none'">
+                    <span style="font-weight:bold; font-size:0.9rem; color:${color}">${data.title}</span>
+                </div>
+                <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" onclick="showCardDetail('${id}')">Voir fiche</button>
+            `;
+            listContainer.appendChild(div);
+        });
+
+        const btnNext = document.getElementById('btn-modal-next');
+        btnNext.onclick = () => {
+            closeModal('modal-phase-success');
+            nextStep();
+        };
+
+        if (currentPhase === 2) {
+             btnNext.innerHTML = "Terminer le scénario ➡";
+             triggerCelebration();
+        } else {
+             btnNext.innerHTML = "Passer à l'étape suivante ➡";
+        }
+
+        openModal('modal-phase-success');
+    }
+    
+    function showCardDetailLocked(id) {
+        showCardDetail(id);
+    }
+
+    function updateInventory(highlightId = null) {
+        const container = document.getElementById('found-items-container');
+        let html = '';
+        
+        let allFound = [];
+        Object.keys(scenarioState).forEach(phase => {
+            scenarioState[phase].forEach(id => {
+                allFound.push(id);
+            });
+        });
+
+        if (allFound.length === 0) {
+            container.innerHTML = `<em style="color:var(--text-light); font-size:0.85rem;">Aucun élément identifié pour le moment.</em>`;
+            return;
+        }
+
+        allFound.forEach(id => {
+            const item = DB.cards[id];
+            let badgeClass = '';
+            let icon = '';
+            let extraClass = '';
+            let highlightClass = (id === highlightId) ? 'just-found' : '';
+
+            if (item.type === 'menace') { 
+                badgeClass = 'badge-menace'; 
+                icon = 'images/espionner.png'; 
+                extraClass = 'menace-highlight'; 
+            }
+            if (item.type === 'risk') { badgeClass = 'badge-risk'; icon = 'images/eclair.png'; }
+            if (item.type === 'practice') { badgeClass = 'badge-practice'; icon = 'images/bouclier.png'; }
+
+            html += `
+            <div class="found-item-badge ${badgeClass} ${extraClass} ${highlightClass}" onclick="showCardDetail('${id}')" role="button" tabindex="0" aria-label="Voir la fiche de ${item.title}">
+                <img src="${icon}" onerror="this.style.display='none'">
+                <span style="flex:1;">${item.title}</span>
+                <span style="font-size:0.7rem; color:#999;">ℹ️</span>
+            </div>`;
+        });
+
+        container.innerHTML = html;
+        
+        if (highlightId) {
+            setTimeout(() => {
+                const els = document.querySelectorAll('.just-found');
+                els.forEach(el => el.classList.remove('just-found'));
+            }, 1000);
+        }
+    }
+
+    function nextStep() {
+        TTS.stop();
+        closeModal('modal-phase-success');
+
+        if (currentPhase < 2) {
+            maxPhaseReached = Math.max(maxPhaseReached, currentPhase + 1);
+            loadPhase(currentPhase + 1);
+        } else {
+            if (currentScenarioIndex + 1 < gameQueue.length) {
+                currentScenarioIndex++;
+                loadScenario(gameQueue[currentScenarioIndex]);
+                updateGlobalProgress();
+            } else {
+                alert("Félicitations ! Vous avez terminé la session.");
+                document.getElementById('game-screen').style.display = 'none';
+                document.getElementById('home-screen').style.display = 'flex';
+            }
+        }
+    }
+    
+    let confettiActive = false;
+    let particles = [];
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    let animationId;
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function startConfetti() {
+        resizeCanvas();
+        confettiActive = true;
+        particles = [];
+        const colors = ['#2563eb', '#dc2626', '#ea580c', '#16a34a', '#fbbf24'];
+        
+        for (let i = 0; i < 150; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                w: Math.random() * 10 + 5,
+                h: Math.random() * 10 + 5,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                speed: Math.random() * 3 + 2,
+                angle: Math.random() * 360,
+                spin: Math.random() * 0.2 - 0.1
+            });
+        }
+        loopConfetti();
+    }
+
+    function loopConfetti() {
+        if (!confettiActive) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(p => {
+            p.y += p.speed;
+            p.angle += p.spin;
+            
+            if (p.y > canvas.height) {
+                p.y = -20;
+                p.x = Math.random() * canvas.width;
+            }
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.angle);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            ctx.restore();
+        });
+
+        animationId = requestAnimationFrame(loopConfetti);
+    }
+
+    function stopConfetti() {
+        confettiActive = false;
+        cancelAnimationFrame(animationId);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function attachGlossaryEvents() {
+        document.querySelectorAll('.glossary-term').forEach(el => {
+            el.onclick = (e) => {
+                e.stopPropagation();
+                showDefinition(el.dataset.term);
+            };
+        });
+    }
+
+</script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
